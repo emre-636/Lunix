@@ -1,0 +1,1737 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>TÜBİTAK 4009 - Enerji Dedektifi</title>
+    <link href="https://fonts.googleapis.com/css2?family=Teko:wght@400;500;600;700&family=Nunito:wght@400;600;700;800&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    <style>
+        :root {
+            --bg-base: #f0f4f2;
+            --card-bg: #ffffff;
+            --card-border: #d6e2da;
+            --card-hover-shadow: 0 12px 40px rgba(13,150,104,0.12);
+            --text-primary: #162a20;
+            --text-secondary: #4a6858;
+            --text-muted: #7a9a8a;
+            --accent: #0d9668;
+            --accent-hover: #087a54;
+            --accent-light: rgba(13,150,104,0.1);
+            --accent2: #d9890c;
+            --accent2-light: rgba(217,137,12,0.1);
+            --input-bg: #f0f5f2;
+            --input-border: #c8d8ce;
+            --input-focus: #0d9668;
+            --overlay-bg: rgba(0,0,0,0.45);
+            --toast-bg: #ffffff;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.06);
+            --shadow-md: 0 6px 24px rgba(0,0,0,0.08);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.12);
+            --skeleton-a: #e8eee8;
+            --skeleton-b: #f5f8f5;
+            --danger: #d63031;
+            --danger-hover: #b71c1c;
+            --radius: 14px;
+            --radius-lg: 20px;
+            --auth-gradient: linear-gradient(145deg, #0d9668, #087a54, #0aa870);
+            --glass-bg: rgba(255,255,255,0.85);
+            --glass-border: rgba(255,255,255,0.4);
+        }
+        .dark {
+            --bg-base: #080e0b;
+            --card-bg: rgba(22,44,32,0.55);
+            --card-border: rgba(255,255,255,0.07);
+            --card-hover-shadow: 0 12px 40px rgba(16,185,129,0.1);
+            --text-primary: #e4f0e8;
+            --text-secondary: #8aaa98;
+            --text-muted: #5a7a6a;
+            --accent: #10b981;
+            --accent-hover: #0d9668;
+            --accent-light: rgba(16,185,129,0.12);
+            --accent2: #fbbf24;
+            --accent2-light: rgba(251,191,36,0.12);
+            --input-bg: rgba(255,255,255,0.05);
+            --input-border: rgba(255,255,255,0.1);
+            --input-focus: #10b981;
+            --overlay-bg: rgba(0,0,0,0.7);
+            --toast-bg: #1a2e22;
+            --shadow-sm: 0 1px 4px rgba(0,0,0,0.3);
+            --shadow-md: 0 6px 24px rgba(0,0,0,0.4);
+            --shadow-lg: 0 16px 48px rgba(0,0,0,0.5);
+            --skeleton-a: rgba(255,255,255,0.04);
+            --skeleton-b: rgba(255,255,255,0.08);
+            --danger: #ef4444;
+            --danger-hover: #dc2626;
+            --auth-gradient: linear-gradient(145deg, #064e3b, #065f46, #047857);
+            --glass-bg: rgba(10,20,15,0.85);
+            --glass-border: rgba(255,255,255,0.08);
+        }
+        *, *::before, *::after { margin:0; padding:0; box-sizing:border-box; }
+        html { scroll-behavior: smooth; }
+        body {
+            font-family: 'Nunito', sans-serif;
+            background: var(--bg-base);
+            color: var(--text-primary);
+            min-height: 100vh;
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* ===== AUTH SCREEN ===== */
+        .auth-wrapper {
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+        .auth-bg {
+            position: absolute; inset: 0; z-index: 0;
+            background: var(--auth-gradient);
+        }
+        .auth-bg::before {
+            content:''; position:absolute; width:500px; height:500px;
+            background: radial-gradient(circle, rgba(255,255,255,0.12) 0%, transparent 70%);
+            top:-150px; right:-100px; border-radius:50%;
+            animation: floatBlob 18s ease-in-out infinite;
+        }
+        .auth-bg::after {
+            content:''; position:absolute; width:400px; height:400px;
+            background: radial-gradient(circle, rgba(251,191,36,0.15) 0%, transparent 70%);
+            bottom:-100px; left:-80px; border-radius:50%;
+            animation: floatBlob 22s ease-in-out infinite reverse;
+        }
+        .auth-particles {
+            position: absolute; inset: 0; z-index: 1; pointer-events: none; overflow: hidden;
+        }
+        .auth-particle {
+            position: absolute;
+            width: 4px; height: 4px;
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            animation: particleFloat linear infinite;
+        }
+        @keyframes particleFloat {
+            0% { transform: translateY(100vh) rotate(0deg); opacity: 0; }
+            10% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { transform: translateY(-10vh) rotate(720deg); opacity: 0; }
+        }
+
+        .auth-card {
+            position: relative; z-index: 2;
+            background: var(--glass-bg);
+            backdrop-filter: blur(24px);
+            -webkit-backdrop-filter: blur(24px);
+            border: 1px solid var(--glass-border);
+            border-radius: 24px;
+            padding: 40px 32px;
+            max-width: 420px;
+            width: 100%;
+            box-shadow: 0 24px 80px rgba(0,0,0,0.15);
+            animation: authCardIn 0.7s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        @keyframes authCardIn {
+            0% { opacity:0; transform:translateY(40px) scale(0.95); }
+            100% { opacity:1; transform:translateY(0) scale(1); }
+        }
+        .auth-logo {
+            text-align: center; margin-bottom: 28px;
+        }
+        .auth-logo-icon {
+            width: 68px; height: 68px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            border-radius: 20px;
+            display: inline-flex; align-items: center; justify-content: center;
+            font-size: 30px; color: #fff;
+            box-shadow: 0 8px 24px rgba(13,150,104,0.3);
+            margin-bottom: 14px;
+            animation: logoFloat 3s ease-in-out infinite;
+        }
+        @keyframes logoFloat {
+            0%,100% { transform: translateY(0); }
+            50% { transform: translateY(-6px); }
+        }
+        .auth-logo h2 {
+            font-family: 'Teko', sans-serif;
+            font-size: 32px; font-weight: 700;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+            background-clip: text; line-height: 1;
+        }
+        .auth-logo p {
+            font-size: 13px; color: var(--text-muted); margin-top: 4px;
+        }
+
+        .auth-toggle {
+            display: flex; gap: 4px;
+            background: var(--input-bg);
+            border-radius: 12px; padding: 4px;
+            margin-bottom: 24px;
+        }
+        .auth-toggle-btn {
+            flex: 1; padding: 10px; border: none; border-radius: 9px;
+            font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s ease;
+            background: transparent; color: var(--text-muted);
+        }
+        .auth-toggle-btn.active {
+            background: var(--accent); color: #fff;
+            box-shadow: 0 4px 14px rgba(13,150,104,0.3);
+        }
+        .auth-toggle-btn:hover:not(.active) {
+            color: var(--text-secondary);
+        }
+
+        .auth-form { display: none; }
+        .auth-form.active { display: block; animation: fadeSlideUp 0.4s ease; }
+
+        .auth-field { margin-bottom: 16px; position: relative; }
+        .auth-field label {
+            display: block; font-size: 13px; font-weight: 700;
+            color: var(--text-secondary); margin-bottom: 6px;
+        }
+        .auth-field label .req { color: var(--danger); }
+        .auth-input-wrap {
+            position: relative; display: flex; align-items: center;
+        }
+        .auth-input-wrap i {
+            position: absolute; left: 14px;
+            color: var(--text-muted); font-size: 15px;
+            pointer-events: none; transition: color 0.3s;
+        }
+        .auth-input-wrap input {
+            width: 100%; padding: 13px 16px 13px 42px;
+            border: 1.5px solid var(--input-border);
+            border-radius: 11px; background: var(--input-bg);
+            color: var(--text-primary); font-family: 'Nunito', sans-serif;
+            font-size: 16px; outline: none;
+            transition: border-color 0.25s, box-shadow 0.25s;
+        }
+        .auth-input-wrap input:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .auth-input-wrap input:focus + i,
+        .auth-input-wrap input:focus ~ i { color: var(--accent); }
+        .auth-input-wrap input::placeholder { color: var(--text-muted); }
+
+        .toggle-pass {
+            position: absolute; right: 14px;
+            background: none; border: none; cursor: pointer;
+            color: var(--text-muted); font-size: 16px; padding: 4px;
+            pointer-events: auto !important;
+        }
+        .toggle-pass:hover { color: var(--accent); }
+
+        .auth-btn {
+            width: 100%; padding: 14px; border: none; border-radius: 12px;
+            background: linear-gradient(135deg, var(--accent), #0aa870);
+            color: #fff; font-family: 'Nunito', sans-serif;
+            font-size: 16px; font-weight: 800; cursor: pointer;
+            transition: all 0.3s ease; margin-top: 8px;
+            display: flex; align-items: center; justify-content: center; gap: 8px;
+        }
+        .auth-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 28px rgba(13,150,104,0.35); }
+        .auth-btn:active { transform: translateY(0); }
+        .auth-btn:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .auth-btn .spinner {
+            width: 18px; height: 18px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite;
+            display: none;
+        }
+        .auth-btn.loading .spinner { display: block; }
+        .auth-btn.loading .btn-text { display: none; }
+
+        .auth-error {
+            background: rgba(214,48,49,0.1);
+            border: 1px solid rgba(214,48,49,0.2);
+            border-radius: 10px; padding: 10px 14px;
+            font-size: 13px; font-weight: 600;
+            color: var(--danger); margin-bottom: 14px;
+            display: none; align-items: center; gap: 8px;
+            animation: shakeX 0.4s ease;
+        }
+        .auth-error.visible { display: flex; }
+        @keyframes shakeX {
+            0%,100% { transform:translateX(0); }
+            20% { transform:translateX(-8px); }
+            40% { transform:translateX(8px); }
+            60% { transform:translateX(-5px); }
+            80% { transform:translateX(5px); }
+        }
+
+        /* ===== MAIN APP ===== */
+        .app-screen { display: none; }
+        .app-screen.active { display: block; }
+
+        .bg-atmosphere { position: fixed; inset:0; pointer-events:none; z-index:0; overflow:hidden; }
+        .bg-atmosphere::before {
+            content:''; position:absolute; width:600px; height:600px;
+            background: radial-gradient(circle, var(--accent) 0%, transparent 70%);
+            opacity:0.06; top:-200px; right:-150px; border-radius:50%;
+            animation: floatBlob 20s ease-in-out infinite;
+        }
+        .bg-atmosphere::after {
+            content:''; position:absolute; width:500px; height:500px;
+            background: radial-gradient(circle, var(--accent2) 0%, transparent 70%);
+            opacity:0.05; bottom:-180px; left:-120px; border-radius:50%;
+            animation: floatBlob 25s ease-in-out infinite reverse;
+        }
+        @keyframes floatBlob {
+            0%,100% { transform: translate(0,0) scale(1); }
+            33% { transform: translate(30px,-40px) scale(1.1); }
+            66% { transform: translate(-20px,30px) scale(0.95); }
+        }
+        .app-container { position:relative; z-index:1; max-width:960px; margin:0 auto; padding:0 16px 40px; }
+
+        .header { text-align:center; padding:28px 16px 20px; animation: fadeSlideDown 0.6s ease; }
+        .header-top {
+            display: flex; align-items: center; justify-content: space-between;
+            margin-bottom: 16px;
+        }
+        .header-user {
+            display: flex; align-items: center; gap: 10px;
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 50px; padding: 6px 16px 6px 8px;
+            box-shadow: var(--shadow-sm);
+        }
+        .header-user-avatar {
+            width: 32px; height: 32px; border-radius: 50%;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            display: flex; align-items: center; justify-content: center;
+            color: #fff; font-size: 13px; font-weight: 800;
+        }
+        .header-user-name { font-size: 13px; font-weight: 700; color: var(--text-secondary); }
+        .btn-logout {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: 50px; padding: 8px 16px; cursor: pointer;
+            color: var(--text-muted); font-size: 13px; font-weight: 700;
+            font-family: 'Nunito', sans-serif; transition: all 0.2s;
+            display: flex; align-items: center; gap: 6px;
+        }
+        .btn-logout:hover { border-color: var(--danger); color: var(--danger); }
+
+        .header-badge {
+            display:inline-flex; align-items:center; gap:8px;
+            background: var(--accent-light); color: var(--accent);
+            padding:6px 16px; border-radius:50px;
+            font-family:'Teko',sans-serif; font-size:15px; font-weight:600;
+            letter-spacing:1.5px; text-transform:uppercase; margin-bottom:10px;
+        }
+        .header-badge i { font-size:13px; }
+        .header h1 {
+            font-family:'Teko',sans-serif; font-weight:700;
+            font-size: clamp(34px,7vw,52px); line-height:1;
+            letter-spacing:-0.5px; margin-bottom:4px;
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            -webkit-background-clip:text; -webkit-text-fill-color:transparent;
+            background-clip:text;
+        }
+        .header .subtitle { font-size: clamp(13px,2.5vw,16px); color:var(--text-secondary); font-weight:600; margin-bottom:4px; }
+        .header .school { font-size:13px; color:var(--text-muted); font-weight:400; }
+
+        /* Gallery */
+        .gallery-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:20px; animation: fadeSlideUp 0.5s ease 0.15s both; }
+        .gallery-title { font-family:'Teko',sans-serif; font-size:28px; font-weight:600; color:var(--text-primary); }
+        .gallery-count {
+            display: inline-flex; align-items: center; justify-content: center;
+            background: var(--accent-light); color: var(--accent);
+            font-size: 13px; font-weight: 800; border-radius: 50px;
+            padding: 2px 10px; margin-left: 8px;
+        }
+        .btn-refresh {
+            background:var(--card-bg); border:1px solid var(--card-border);
+            border-radius:10px; padding:10px 16px; cursor:pointer;
+            color:var(--text-secondary); font-size:14px; font-weight:600;
+            font-family:'Nunito',sans-serif; transition:all 0.2s;
+            display:flex; align-items:center; gap:6px;
+        }
+        .btn-refresh:hover { border-color:var(--accent); color:var(--accent); }
+        .btn-refresh.spinning i { animation: spin 0.8s linear infinite; }
+
+        /* Search & Filter */
+        .filter-bar {
+            display: flex; gap: 10px; margin-bottom: 20px;
+            animation: fadeSlideUp 0.5s ease 0.2s both;
+            flex-wrap: wrap;
+        }
+        .search-wrap {
+            flex: 1; min-width: 200px; position: relative;
+        }
+        .search-wrap i {
+            position: absolute; left: 14px; top: 50%; transform: translateY(-50%);
+            color: var(--text-muted); font-size: 14px; pointer-events: none;
+        }
+        .search-input {
+            width: 100%; padding: 11px 16px 11px 40px;
+            border: 1.5px solid var(--card-border); border-radius: 11px;
+            background: var(--card-bg); color: var(--text-primary);
+            font-family: 'Nunito', sans-serif; font-size: 16px;
+            outline: none; transition: border-color 0.25s;
+        }
+        .search-input:focus { border-color: var(--accent); box-shadow: 0 0 0 3px var(--accent-light); }
+        .search-input::placeholder { color: var(--text-muted); }
+        .filter-select {
+            padding: 11px 36px 11px 14px;
+            border: 1.5px solid var(--card-border); border-radius: 11px;
+            background: var(--card-bg); color: var(--text-primary);
+            font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 600;
+            outline: none; cursor: pointer; transition: border-color 0.25s;
+            appearance: none;
+            background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='12' height='12' viewBox='0 0 12 12'%3E%3Cpath fill='%237a9a8a' d='M6 8L1 3h10z'/%3E%3C/svg%3E");
+            background-repeat: no-repeat; background-position: right 14px center;
+        }
+        .filter-select:focus { border-color: var(--accent); }
+
+        .gallery-grid { display:grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap:18px; }
+        .project-card {
+            background:var(--card-bg); border:1px solid var(--card-border);
+            border-radius:var(--radius); overflow:hidden; cursor:pointer;
+            transition:all 0.3s ease; animation: fadeSlideUp 0.4s ease both;
+        }
+        .project-card:hover { transform:translateY(-4px); box-shadow: var(--card-hover-shadow); border-color:var(--accent); }
+        .card-image { width:100%; aspect-ratio:4/3; object-fit:cover; background:var(--skeleton-a); }
+        .card-image-placeholder {
+            width:100%; aspect-ratio:4/3; display:flex; align-items:center; justify-content:center;
+            background:var(--skeleton-a); color:var(--text-muted); font-size:36px; flex-direction:column; gap:6px;
+        }
+        .card-image-placeholder span { font-size:11px; font-weight:600; }
+        .card-body { padding:14px 16px; }
+        .card-title { font-family:'Teko',sans-serif; font-size:22px; font-weight:600; line-height:1.15; margin-bottom:6px; color:var(--text-primary); }
+        .card-meta { display:flex; align-items:center; gap:8px; flex-wrap:wrap; }
+        .card-badge { font-size:12px; font-weight:700; padding:3px 10px; border-radius:50px; }
+        .card-date { font-size:12px; color:var(--text-muted); }
+
+        .empty-state { text-align:center; padding:60px 20px; animation: fadeSlideUp 0.5s ease; }
+        .empty-state i { font-size:64px; color:var(--text-muted); margin-bottom:16px; opacity:0.5; }
+        .empty-state h3 { font-family:'Teko',sans-serif; font-size:26px; color:var(--text-secondary); margin-bottom:8px; }
+        .empty-state p { font-size:14px; color:var(--text-muted); max-width:360px; margin:0 auto; line-height:1.6; }
+
+        .skeleton-card { background:var(--card-bg); border:1px solid var(--card-border); border-radius:var(--radius); overflow:hidden; }
+        .skel { background:linear-gradient(90deg, var(--skeleton-a) 25%, var(--skeleton-b) 50%, var(--skeleton-a) 75%); background-size:800px 100%; animation:shimmer 1.5s infinite; border-radius:6px; }
+        .skel-img { width:100%; aspect-ratio:4/3; }
+        .skel-body { padding:14px 16px; }
+        .skel-line { height:14px; margin-bottom:10px; }
+        .skel-line.w60 { width:60%; }
+        .skel-line.w40 { width:40%; }
+        @keyframes shimmer { 0%{background-position:-400px 0} 100%{background-position:400px 0} }
+
+        /* Modal */
+        .modal-overlay {
+            position:fixed; inset:0; background:var(--overlay-bg);
+            z-index:100; display:none; align-items:center; justify-content:center;
+            padding:16px; animation:fadeIn 0.25s ease; overflow-y:auto;
+        }
+        .modal-overlay.open { display:flex; }
+        .modal-content {
+            background:var(--card-bg); border:1px solid var(--card-border);
+            border-radius:var(--radius-lg); max-width:600px; width:100%;
+            max-height:90vh; overflow-y:auto; animation:scaleIn 0.3s ease;
+            box-shadow: var(--shadow-lg);
+        }
+        .modal-image { width:100%; max-height:400px; object-fit:contain; background:#000; }
+        .modal-body { padding:24px; }
+        .modal-title { font-family:'Teko',sans-serif; font-size:32px; font-weight:600; line-height:1.1; margin-bottom:12px; }
+        .modal-info { margin-bottom:20px; }
+        .modal-row { display:flex; gap:8px; padding:10px 0; border-bottom:1px solid var(--card-border); font-size:15px; }
+        .modal-row:last-child { border-bottom:none; }
+        .modal-row-label { font-weight:700; color:var(--text-muted); min-width:110px; flex-shrink:0; }
+        .modal-row-value { color:var(--text-primary); word-break:break-word; }
+        .modal-actions { display:flex; gap:10px; margin-top:16px; }
+        .btn-close-modal {
+            flex:1; padding:12px; border:1.5px solid var(--card-border);
+            border-radius:10px; background:transparent; color:var(--text-secondary);
+            font-family:'Nunito',sans-serif; font-size:15px; font-weight:700;
+            cursor:pointer; transition:all 0.2s;
+        }
+        .btn-close-modal:hover { border-color:var(--text-muted); }
+
+        /* Categories */
+        .cat-solar { background:rgba(251,191,36,0.15); color:#b78a0a; }
+        .dark .cat-solar { background:rgba(251,191,36,0.15); color:#fbbf24; }
+        .cat-wind { background:rgba(56,189,248,0.15); color:#0284c7; }
+        .dark .cat-wind { background:rgba(56,189,248,0.15); color:#38bdf8; }
+        .cat-hydro { background:rgba(34,211,238,0.15); color:#0891b2; }
+        .dark .cat-hydro { background:rgba(34,211,238,0.15); color:#22d3ee; }
+        .cat-bio { background:rgba(74,222,128,0.15); color:#16a34a; }
+        .dark .cat-bio { background:rgba(74,222,128,0.15); color:#4ade80; }
+        .cat-geo { background:rgba(251,146,60,0.15); color:#c2410c; }
+        .dark .cat-geo { background:rgba(251,146,60,0.15); color:#fb923c; }
+        .cat-hydrogen { background:rgba(192,132,252,0.15); color:#7c3aed; }
+        .dark .cat-hydrogen { background:rgba(192,132,252,0.15); color:#c084fc; }
+        .cat-storage { background:rgba(244,114,182,0.15); color:#be185d; }
+        .dark .cat-storage { background:rgba(244,114,182,0.15); color:#f472b6; }
+        .cat-efficiency { background:rgba(45,212,191,0.15); color:#0d9488; }
+        .dark .cat-efficiency { background:rgba(45,212,191,0.15); color:#2dd4bf; }
+        .cat-other { background:rgba(148,163,184,0.15); color:#64748b; }
+        .dark .cat-other { background:rgba(148,163,184,0.15); color:#94a3b8; }
+
+        /* Toast */
+        .toast-container { position:fixed; bottom:20px; right:20px; z-index:300; display:flex; flex-direction:column; gap:8px; }
+        .toast {
+            background:var(--toast-bg); border:1px solid var(--card-border);
+            border-radius:12px; padding:14px 18px; min-width:260px; max-width:360px;
+            box-shadow:var(--shadow-md); display:flex; align-items:center; gap:10px;
+            animation:slideInRight 0.35s ease; font-size:14px; font-weight:600;
+        }
+        .toast.removing { animation:slideOutRight 0.3s ease forwards; }
+        .toast-icon { font-size:18px; flex-shrink:0; }
+        .toast.success .toast-icon { color:var(--accent); }
+        .toast.error .toast-icon { color:var(--danger); }
+        .toast.warning .toast-icon { color:var(--accent2); }
+
+        /* Animations */
+        @keyframes fadeIn { from{opacity:0} to{opacity:1} }
+        @keyframes fadeSlideUp { from{opacity:0;transform:translateY(20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes fadeSlideDown { from{opacity:0;transform:translateY(-20px)} to{opacity:1;transform:translateY(0)} }
+        @keyframes scaleIn { from{opacity:0;transform:scale(0.92)} to{opacity:1;transform:scale(1)} }
+        @keyframes slideInRight { from{opacity:0;transform:translateX(60px)} to{opacity:1;transform:translateX(0)} }
+        @keyframes slideOutRight { from{opacity:1;transform:translateX(0)} to{opacity:0;transform:translateX(60px)} }
+        @keyframes spin { to{transform:rotate(360deg)} }
+
+        /* ===== FORGOT PASSWORD ===== */
+        .forgot-link {
+            display: block; text-align: center; margin-top: 14px;
+            font-size: 14px; font-weight: 700; color: var(--accent);
+            cursor: pointer; transition: all 0.2s;
+            text-decoration: none;
+        }
+        .forgot-link:hover { color: var(--accent-hover); text-decoration: underline; }
+        .forgot-link i { margin-right: 4px; font-size: 13px; }
+
+        .forgot-overlay {
+            position: fixed; inset: 0; background: var(--overlay-bg);
+            z-index: 200; display: none; align-items: center; justify-content: center;
+            padding: 16px; overflow-y: auto;
+        }
+        .forgot-overlay.open { display: flex; animation: fadeIn 0.25s ease; }
+
+        .forgot-card {
+            background: var(--card-bg); border: 1px solid var(--card-border);
+            border-radius: var(--radius-lg); max-width: 440px; width: 100%;
+            box-shadow: var(--shadow-lg); animation: scaleIn 0.3s ease;
+            overflow: hidden;
+        }
+        .forgot-header {
+            background: linear-gradient(135deg, var(--accent), var(--accent2));
+            padding: 28px 24px 22px; text-align: center; position: relative;
+        }
+        .forgot-header-icon {
+            width: 56px; height: 56px; border-radius: 50%;
+            background: rgba(255,255,255,0.2); display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 24px; color: #fff; margin-bottom: 12px;
+            backdrop-filter: blur(8px);
+        }
+        .forgot-header h3 {
+            color: #fff; font-family: 'Teko', sans-serif;
+            font-size: 26px; font-weight: 600; margin: 0;
+        }
+        .forgot-header p {
+            color: rgba(255,255,255,0.8); font-size: 13px; margin-top: 4px;
+        }
+
+        .forgot-body { padding: 24px; }
+
+        .forgot-step { display: none; }
+        .forgot-step.active { display: block; animation: fadeSlideUp 0.35s ease; }
+
+        .forgot-step-indicator {
+            display: flex; align-items: center; justify-content: center;
+            gap: 8px; margin-bottom: 20px;
+        }
+        .forgot-dot {
+            width: 10px; height: 10px; border-radius: 50%;
+            background: var(--input-border); transition: all 0.3s;
+        }
+        .forgot-dot.active { background: var(--accent); transform: scale(1.25); }
+        .forgot-dot.done { background: var(--accent); opacity: 0.5; }
+        .forgot-dot-line {
+            width: 28px; height: 2px; background: var(--input-border);
+            border-radius: 2px; transition: background 0.3s;
+        }
+        .forgot-dot-line.done { background: var(--accent); }
+
+        .forgot-info {
+            background: var(--accent-light); border: 1px solid rgba(13,150,104,0.15);
+            border-radius: 12px; padding: 14px 16px; margin-bottom: 18px;
+            font-size: 13px; color: var(--text-secondary); line-height: 1.6;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .forgot-info i { color: var(--accent); font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+
+        .forgot-sent-email {
+            text-align: center; margin-bottom: 16px;
+        }
+        .forgot-sent-email .sent-icon {
+            width: 60px; height: 60px; border-radius: 50%;
+            background: var(--accent-light); display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 26px; color: var(--accent); margin-bottom: 12px;
+        }
+        .forgot-sent-email p {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.5;
+        }
+        .forgot-sent-email .sent-addr {
+            font-weight: 800; color: var(--accent);
+        }
+
+        .code-inputs-wrap {
+            display: flex; gap: 6px; justify-content: center; margin: 20px 0;
+        }
+        .code-input-box {
+            width: 42px; height: 52px; border: 2px solid var(--input-border);
+            border-radius: 10px; background: var(--input-bg);
+            color: var(--text-primary); font-family: 'Teko', sans-serif;
+            font-size: 26px; font-weight: 600; text-align: center;
+            outline: none; transition: border-color 0.25s, box-shadow 0.25s;
+            -moz-appearance: textfield;
+        }
+        .code-input-box::-webkit-outer-spin-button,
+        .code-input-box::-webkit-inner-spin-button { -webkit-appearance: none; margin: 0; }
+        .code-input-box:focus {
+            border-color: var(--accent);
+            box-shadow: 0 0 0 3px var(--accent-light);
+        }
+        .code-input-box.error-shake {
+            border-color: var(--danger); animation: shakeX 0.4s ease;
+        }
+
+        .forgot-timer {
+            text-align: center; font-size: 13px; color: var(--text-muted);
+            margin-top: 10px;
+        }
+        .forgot-timer .timer-val { font-weight: 800; color: var(--accent2); }
+        .forgot-resend {
+            background: none; border: none; color: var(--accent);
+            font-family: 'Nunito', sans-serif; font-size: 13px;
+            font-weight: 700; cursor: pointer; text-decoration: underline;
+            padding: 0; margin-top: 4px;
+        }
+        .forgot-resend:disabled { color: var(--text-muted); cursor: not-allowed; text-decoration: none; }
+
+        .forgot-actions { display: flex; gap: 10px; margin-top: 18px; }
+        .forgot-btn {
+            flex: 1; padding: 13px; border: none; border-radius: 11px;
+            font-family: 'Nunito', sans-serif; font-size: 15px; font-weight: 700;
+            cursor: pointer; transition: all 0.3s; display: flex;
+            align-items: center; justify-content: center; gap: 8px;
+        }
+        .forgot-btn-primary {
+            background: linear-gradient(135deg, var(--accent), #0aa870);
+            color: #fff;
+        }
+        .forgot-btn-primary:hover { transform: translateY(-2px); box-shadow: 0 6px 20px rgba(13,150,104,0.3); }
+        .forgot-btn-primary:disabled { opacity: 0.6; cursor: not-allowed; transform: none !important; box-shadow: none !important; }
+        .forgot-btn-secondary {
+            background: transparent; border: 1.5px solid var(--card-border);
+            color: var(--text-secondary);
+        }
+        .forgot-btn-secondary:hover { border-color: var(--text-muted); }
+        .forgot-btn .spinner {
+            width: 16px; height: 16px;
+            border: 2.5px solid rgba(255,255,255,0.3);
+            border-top-color: #fff; border-radius: 50%;
+            animation: spin 0.7s linear infinite; display: none;
+        }
+        .forgot-btn.loading .spinner { display: block; }
+        .forgot-btn.loading .btn-text { display: none; }
+
+        .forgot-success {
+            text-align: center; padding: 10px 0;
+        }
+        .forgot-success .success-icon {
+            width: 72px; height: 72px; border-radius: 50%;
+            background: var(--accent-light); display: inline-flex;
+            align-items: center; justify-content: center;
+            font-size: 32px; color: var(--accent); margin-bottom: 16px;
+            animation: scaleIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        .forgot-success h4 {
+            font-family: 'Teko', sans-serif; font-size: 24px;
+            font-weight: 600; color: var(--text-primary); margin-bottom: 8px;
+        }
+        .forgot-success p {
+            font-size: 14px; color: var(--text-secondary); line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .forgot-warning {
+            background: rgba(217,137,12,0.1); border: 1px solid rgba(217,137,12,0.2);
+            border-radius: 10px; padding: 12px 14px; margin-bottom: 16px;
+            font-size: 13px; color: var(--accent2); line-height: 1.5;
+            display: flex; gap: 10px; align-items: flex-start;
+        }
+        .forgot-warning i { font-size: 16px; margin-top: 2px; flex-shrink: 0; }
+
+        @media(max-width:480px) {
+            .app-container { padding:0 10px 32px; }
+            .gallery-grid { grid-template-columns:1fr; }
+            .modal-body { padding:18px 16px; }
+            .toast-container { bottom:12px; right:12px; left:12px; }
+            .toast { min-width:auto; }
+            .auth-card { padding: 28px 20px; }
+            .header-top { flex-direction: column; gap: 10px; }
+            .filter-bar { flex-direction: column; }
+            .forgot-card { margin: 10px; }
+            .forgot-body { padding: 18px 16px; }
+            .code-input-box { width: 36px; height: 46px; font-size: 22px; }
+        }
+    </style>
+</head>
+<body>
+
+<!-- ===== AUTH SCREEN ===== -->
+<div class="app-screen active" id="authScreen">
+    <div class="auth-wrapper">
+        <div class="auth-bg"></div>
+        <div class="auth-particles" id="authParticles"></div>
+        <div class="auth-card">
+            <div class="auth-logo">
+                <div class="auth-logo-icon"><i class="fas fa-bolt"></i></div>
+                <h2>Enerji Dedektifi</h2>
+                <p>TÜBİTAK 4009 Proje Platformu</p>
+            </div>
+
+            <div class="auth-toggle">
+                <button class="auth-toggle-btn active" id="toggleLogin" onclick="switchAuth('login')">Giriş Yap</button>
+                <button class="auth-toggle-btn" id="toggleRegister" onclick="switchAuth('register')">Kayıt Ol</button>
+            </div>
+
+            <!-- LOGIN FORM -->
+            <div class="auth-form active" id="loginForm">
+                <div class="auth-error" id="loginError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="loginErrorText"></span>
+                </div>
+                <div class="auth-field">
+                    <label>Gmail Adresi <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="email" id="loginEmail" placeholder="ornek@gmail.com" autocomplete="email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label>Şifre <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="loginPass" placeholder="Şifrenizi girin" autocomplete="current-password">
+                        <i class="fas fa-lock"></i>
+                        <button type="button" class="toggle-pass" onclick="togglePassword('loginPass', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button class="auth-btn" id="btnLogin" onclick="handleLogin()">
+                    <div class="spinner"></div>
+                    <span class="btn-text"><i class="fas fa-sign-in-alt"></i> Giriş Yap</span>
+                </button>
+                <a class="forgot-link" onclick="openForgotPassword()">
+                    <i class="fas fa-key"></i> Şifremi Unuttum
+                </a>
+            </div>
+
+            <!-- REGISTER FORM -->
+            <div class="auth-form" id="registerForm">
+                <div class="auth-error" id="registerError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="registerErrorText"></span>
+                </div>
+                <div class="auth-field">
+                    <label>Adınız <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="text" id="regName" placeholder="Adınızı girin" autocomplete="name">
+                        <i class="fas fa-user"></i>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label>Gmail Adresi <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="email" id="regEmail" placeholder="ornek@gmail.com" autocomplete="email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label>Şifre <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="regPass" placeholder="En az 6 karakter" autocomplete="new-password">
+                        <i class="fas fa-lock"></i>
+                        <button type="button" class="toggle-pass" onclick="togglePassword('regPass', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <div class="auth-field">
+                    <label>Şifre Tekrar <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="password" id="regPassConfirm" placeholder="Şifrenizi tekrar girin" autocomplete="new-password">
+                        <i class="fas fa-shield-alt"></i>
+                        <button type="button" class="toggle-pass" onclick="togglePassword('regPassConfirm', this)"><i class="fas fa-eye"></i></button>
+                    </div>
+                </div>
+                <button class="auth-btn" id="btnRegister" onclick="handleRegister()">
+                    <div class="spinner"></div>
+                    <span class="btn-text"><i class="fas fa-user-plus"></i> Kayıt Ol</span>
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- ===== MAIN APP SCREEN ===== -->
+<div class="app-screen" id="mainScreen">
+    <div class="bg-atmosphere"></div>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-top">
+                <div class="header-user">
+                    <div class="header-user-avatar" id="userAvatar"></div>
+                    <span class="header-user-name" id="userName"></span>
+                </div>
+                <button class="btn-logout" onclick="handleLogout()">
+                    <i class="fas fa-sign-out-alt"></i> Çıkış
+                </button>
+            </div>
+            <div class="header-badge"><i class="fas fa-bolt"></i> TÜBİTAK 4009</div>
+            <h1>Enerji Dedektifi</h1>
+            <p class="subtitle">Doğa ve Yenilenebilir Enerji ile Geleceği Keşfet</p>
+            <p class="school">Lunix-Abduldamithan MTAL</p>
+        </header>
+
+        <div class="gallery-header">
+            <h2 class="gallery-title">Yüklenen Projeler <span class="gallery-count" id="projectCount">0</span></h2>
+            <button class="btn-refresh" id="btnRefresh" onclick="loadGallery()">
+                <i class="fas fa-sync-alt"></i> Yenile
+            </button>
+        </div>
+
+        <div class="filter-bar">
+            <div class="search-wrap">
+                <i class="fas fa-search"></i>
+                <input class="search-input" type="text" id="searchInput" placeholder="Proje ara..." oninput="filterProjects()">
+            </div>
+            <select class="filter-select" id="filterCategory" onchange="filterProjects()">
+                <option value="">Tüm Kategoriler</option>
+                <option value="solar">☀️ Güneş Enerjisi</option>
+                <option value="wind">💨 Rüzgar Enerjisi</option>
+                <option value="hydro">💧 Hidroelektrik</option>
+                <option value="bio">🌿 Biyokütle</option>
+                <option value="geo">🌋 Jeotermal</option>
+                <option value="hydrogen">⚡ Hidrojen</option>
+                <option value="storage">🔋 Depolama</option>
+                <option value="efficiency">♻️ Verimlilik</option>
+                <option value="other">🔬 Diğer</option>
+            </select>
+        </div>
+
+        <div id="galleryContent"></div>
+    </div>
+</div>
+
+<!-- DETAIL MODAL -->
+<div class="modal-overlay" id="detailModal">
+    <div class="modal-content">
+        <img class="modal-image" id="modalImage" alt="Proje Fotoğrafı">
+        <div class="modal-body">
+            <h2 class="modal-title" id="modalTitle"></h2>
+            <div class="modal-info" id="modalInfo"></div>
+            <div class="modal-actions">
+                <button class="btn-close-modal" onclick="closeModal()">
+                    <i class="fas fa-times"></i> Kapat
+                </button>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- FORGOT PASSWORD MODAL -->
+<div class="forgot-overlay" id="forgotModal">
+    <div class="forgot-card">
+        <div class="forgot-header">
+            <div class="forgot-header-icon"><i class="fas fa-lock-open"></i></div>
+            <h3>Şifremi Unuttum</h3>
+            <p>Hesap sıfırlama işlemi</p>
+        </div>
+        <div class="forgot-body">
+            <!-- Step Indicator -->
+            <div class="forgot-step-indicator">
+                <div class="forgot-dot active" id="fDot1"></div>
+                <div class="forgot-dot-line" id="fLine1"></div>
+                <div class="forgot-dot" id="fDot2"></div>
+                <div class="forgot-dot-line" id="fLine2"></div>
+                <div class="forgot-dot" id="fDot3"></div>
+            </div>
+
+            <!-- STEP 1: Enter Email -->
+            <div class="forgot-step active" id="forgotStep1">
+                <div class="forgot-info">
+                    <i class="fas fa-info-circle"></i>
+                    <span>Gmail adresinizi girin. Hesabınıza kayıtlı e-posta adresine <strong>8 haneli doğrulama kodu</strong> göndereceğiz.</span>
+                </div>
+                <div class="auth-error" id="forgotEmailError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="forgotEmailErrorText"></span>
+                </div>
+                <div class="auth-field">
+                    <label>Gmail Adresi <span class="req">*</span></label>
+                    <div class="auth-input-wrap">
+                        <input type="email" id="forgotEmailInput" placeholder="ornek@gmail.com" autocomplete="email">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                </div>
+                <div class="forgot-actions">
+                    <button class="forgot-btn forgot-btn-secondary" onclick="closeForgotPassword()">
+                        <i class="fas fa-arrow-left"></i> Geri Dön
+                    </button>
+                    <button class="forgot-btn forgot-btn-primary" id="btnSendCode" onclick="handleForgotSendCode()">
+                        <div class="spinner"></div>
+                        <span class="btn-text"><i class="fas fa-paper-plane"></i> Kod Gönder</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 2: Enter Verification Code -->
+            <div class="forgot-step" id="forgotStep2">
+                <div class="forgot-sent-email">
+                    <div class="sent-icon"><i class="fas fa-envelope-open-text"></i></div>
+                    <p>Doğrulama kodu gönderildi:<br><span class="sent-addr" id="forgotSentAddr"></span></p>
+                </div>
+                <div class="forgot-warning">
+                    <i class="fas fa-exclamation-triangle"></i>
+                    <span><strong>Dikkat:</strong> Doğru kodu girdiğinizde bu Gmail adresine ait hesap <strong>silinecek</strong> ve "Kayıt Ol" ekranından yeniden hesap oluşturmanız gerekecektir.</span>
+                </div>
+                <div class="auth-error" id="forgotCodeError">
+                    <i class="fas fa-exclamation-circle"></i>
+                    <span id="forgotCodeErrorText"></span>
+                </div>
+                <div class="code-inputs-wrap" id="codeInputsWrap">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="0">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="1">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="2">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="3">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="4">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="5">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="6">
+                    <input class="code-input-box" type="text" maxlength="1" inputmode="numeric" data-idx="7">
+                </div>
+                <div class="forgot-timer" id="forgotTimer">
+                    Kod geçerlilik süresi: <span class="timer-val" id="timerVal">03:00</span>
+                </div>
+                <div style="text-align:center; margin-top:6px;">
+                    <button class="forgot-resend" id="btnResend" onclick="handleResendCode()" disabled>Kodu Tekrar Gönder</button>
+                </div>
+                <div class="forgot-actions">
+                    <button class="forgot-btn forgot-btn-secondary" onclick="goForgotStep(1)">
+                        <i class="fas fa-arrow-left"></i> Geri
+                    </button>
+                    <button class="forgot-btn forgot-btn-primary" id="btnVerifyCode" onclick="handleVerifyCode()">
+                        <div class="spinner"></div>
+                        <span class="btn-text"><i class="fas fa-check-circle"></i> Doğrula ve Sil</span>
+                    </button>
+                </div>
+            </div>
+
+            <!-- STEP 3: Success -->
+            <div class="forgot-step" id="forgotStep3">
+                <div class="forgot-success">
+                    <div class="success-icon"><i class="fas fa-check"></i></div>
+                    <h4>Hesap Başarıyla Silindi!</h4>
+                    <p>Hesabınız sistemden kaldırıldı. Şimdi <strong>"Kayıt Ol"</strong> ekranından yeni bir hesap oluşturabilirsiniz.</p>
+                    <button class="forgot-btn forgot-btn-primary" style="width:100%;" onclick="forgotGoToRegister()">
+                        <span class="btn-text"><i class="fas fa-user-plus"></i> Kayıt Ol Ekranına Git</span>
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="toast-container" id="toastContainer"></div>
+
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@3/dist/email.min.js"></script>
+<script>
+/* ===== DARK MODE ===== */
+if (window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches) {
+    document.documentElement.classList.add('dark');
+}
+window.matchMedia('(prefers-color-scheme: dark)').addEventListener('change', function(event) {
+    if (event.matches) { document.documentElement.classList.add('dark'); }
+    else { document.documentElement.classList.remove('dark'); }
+});
+
+/* ===== PARTICLES ===== */
+(function createParticles() {
+    var container = document.getElementById('authParticles');
+    for (var i = 0; i < 20; i++) {
+        var p = document.createElement('div');
+        p.className = 'auth-particle';
+        p.style.left = Math.random() * 100 + '%';
+        p.style.animationDuration = (8 + Math.random() * 14) + 's';
+        p.style.animationDelay = (Math.random() * 8) + 's';
+        p.style.width = p.style.height = (2 + Math.random() * 4) + 'px';
+        container.appendChild(p);
+    }
+})();
+
+/* ===== SUPABASE CONFIG ===== */
+var SUPABASE_URL = 'https://doprgdhradxnafbvkqvu.supabase.co';
+var SUPABASE_KEY = 'sb_publishable_SLqM2qT47jD6LJPJkBucGA_j0DHPpJx';
+var TABLE_NAME = 'projeler';
+var BUCKET_NAME = 'projeler';
+
+var CATEGORIES = {
+    solar: { label: '☀️ Güneş Enerjisi', cls: 'cat-solar' },
+    wind: { label: '💨 Rüzgar Enerjisi', cls: 'cat-wind' },
+    hydro: { label: '💧 Hidroelektrik', cls: 'cat-hydro' },
+    bio: { label: '🌿 Biyokütle', cls: 'cat-bio' },
+    geo: { label: '🌋 Jeotermal', cls: 'cat-geo' },
+    hydrogen: { label: '⚡ Hidrojen', cls: 'cat-hydrogen' },
+    storage: { label: '🔋 Depolama', cls: 'cat-storage' },
+    efficiency: { label: '♻️ Verimlilik', cls: 'cat-efficiency' },
+    other: { label: '🔬 Diğer', cls: 'cat-other' }
+};
+
+/* ===== STATE ===== */
+var projects = [];
+var filteredProjects = [];
+var currentProject = null;
+var currentUser = null;
+
+/* ===== SUPABASE REST API ===== */
+var SB = {
+    authHeaders: function(contentType) {
+        var h = { 'apikey': SUPABASE_KEY, 'Authorization': 'Bearer ' + SUPABASE_KEY };
+        if (contentType) { h['Content-Type'] = contentType; }
+        return h;
+    },
+
+    async getRows(table, query) {
+        var url = SUPABASE_URL + '/rest/v1/' + table + '?' + (query || 'select=*');
+        var res = await fetch(url, { headers: this.authHeaders() });
+        if (!res.ok) { throw new Error(await this.parseErr(res)); }
+        return res.json();
+    },
+
+    async insertRow(table, data) {
+        var res = await fetch(SUPABASE_URL + '/rest/v1/' + table, {
+            method: 'POST',
+            headers: Object.assign({}, this.authHeaders('application/json'), { 'Prefer': 'return=representation' }),
+            body: JSON.stringify(data)
+        });
+        if (!res.ok) { throw new Error(await this.parseErr(res)); }
+        var rows = await res.json();
+        return rows[0];
+    },
+
+    publicUrl: function(path) {
+        return SUPABASE_URL + '/storage/v1/object/public/' + BUCKET_NAME + '/' + path;
+    },
+
+    async deleteRows(table, query) {
+        var url = SUPABASE_URL + '/rest/v1/' + table + '?' + query;
+        var res = await fetch(url, {
+            method: 'DELETE',
+            headers: Object.assign({}, this.authHeaders('application/json'), { 'Prefer': 'return=representation' })
+        });
+        if (!res.ok) { throw new Error(await this.parseErr(res)); }
+        return res.json();
+    },
+
+    async parseErr(res) {
+        try {
+            var data = await res.json();
+            if (data.message) { return data.message; }
+            if (data.error) { return typeof data.error === 'string' ? data.error : JSON.stringify(data.error); }
+            if (data.msg) { return data.msg; }
+            return JSON.stringify(data);
+        } catch (e) {
+            return 'HTTP ' + res.status + ': ' + res.statusText;
+        }
+    }
+};
+
+/* ===== SIMPLE HASH (for password) ===== */
+async function hashPassword(pass) {
+    var encoder = new TextEncoder();
+    var data = encoder.encode(pass + '_enerji_dedektifi_salt_2024');
+    var hashBuffer = await crypto.subtle.digest('SHA-256', data);
+    var hashArray = Array.from(new Uint8Array(hashBuffer));
+    return hashArray.map(function(b) { return b.toString(16).padStart(2, '0'); }).join('');
+}
+
+/* ===== UI HELPERS ===== */
+function showToast(message, type) {
+    type = type || 'success';
+    var icons = { success: 'fa-check-circle', error: 'fa-exclamation-circle', warning: 'fa-exclamation-triangle' };
+    var container = document.getElementById('toastContainer');
+    var toast = document.createElement('div');
+    toast.className = 'toast ' + type;
+    toast.innerHTML = '<i class="fas ' + (icons[type] || icons.success) + ' toast-icon"></i><span>' + escapeHtml(message) + '</span>';
+    container.appendChild(toast);
+    setTimeout(function() {
+        toast.classList.add('removing');
+        setTimeout(function() { toast.remove(); }, 300);
+    }, 3500);
+}
+
+function escapeHtml(str) {
+    if (!str) { return ''; }
+    var div = document.createElement('div');
+    div.textContent = str;
+    return div.innerHTML;
+}
+
+function handleImgError(img) {
+    img.onerror = null;
+    var placeholder = document.createElement('div');
+    placeholder.className = 'card-image-placeholder';
+    placeholder.innerHTML = '<i class="fas fa-image"></i><span>Resim yüklenemedi</span>';
+    img.parentNode.replaceChild(placeholder, img);
+}
+
+/* ===== AUTH FUNCTIONS ===== */
+function switchAuth(mode) {
+    document.getElementById('toggleLogin').classList.toggle('active', mode === 'login');
+    document.getElementById('toggleRegister').classList.toggle('active', mode === 'register');
+    document.getElementById('loginForm').classList.toggle('active', mode === 'login');
+    document.getElementById('registerForm').classList.toggle('active', mode === 'register');
+    document.getElementById('loginError').classList.remove('visible');
+    document.getElementById('registerError').classList.remove('visible');
+}
+
+function togglePassword(inputId, btn) {
+    var input = document.getElementById(inputId);
+    var icon = btn.querySelector('i');
+    if (input.type === 'password') {
+        input.type = 'text';
+        icon.classList.replace('fa-eye', 'fa-eye-slash');
+    } else {
+        input.type = 'password';
+        icon.classList.replace('fa-eye-slash', 'fa-eye');
+    }
+}
+
+function showAuthError(formId, msg) {
+    var errorEl = document.getElementById(formId + 'Error');
+    var textEl = document.getElementById(formId + 'ErrorText');
+    textEl.textContent = msg;
+    errorEl.classList.add('visible');
+    errorEl.style.animation = 'none';
+    errorEl.offsetHeight;
+    errorEl.style.animation = '';
+}
+
+function hideAuthError(formId) {
+    document.getElementById(formId + 'Error').classList.remove('visible');
+}
+
+function setAuthLoading(btnId, loading) {
+    var btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    if (loading) { btn.classList.add('loading'); }
+    else { btn.classList.remove('loading'); }
+}
+
+function validateEmail(email) {
+    return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email);
+}
+
+async function handleLogin() {
+    hideAuthError('login');
+    var email = document.getElementById('loginEmail').value.trim().toLowerCase();
+    var pass = document.getElementById('loginPass').value;
+
+    if (!email) { showAuthError('login', 'Lütfen Gmail adresinizi girin.'); return; }
+    if (!validateEmail(email)) { showAuthError('login', 'Geçerli bir Gmail adresi girin.'); return; }
+    if (!pass) { showAuthError('login', 'Lütfen şifrenizi girin.'); return; }
+
+    setAuthLoading('btnLogin', true);
+    try {
+        var hashedPass = await hashPassword(pass);
+        
+        // Kullanıcıyı projeler tablosunda ara (gmail ve şifre ile)
+        var users = await SB.getRows(TABLE_NAME, 'select=*&gmail=eq.' + encodeURIComponent(email) + '&sifre=eq.' + hashedPass);
+
+        if (!users || users.length === 0) {
+            showAuthError('login', 'E-posta veya şifre hatalı. Lütfen tekrar deneyin.');
+            setAuthLoading('btnLogin', false);
+            return;
+        }
+
+        var user = users[0];
+        currentUser = { ad: user.ad, gmail: user.gmail };
+        setAuthLoading('btnLogin', false);
+        showMainApp();
+
+    } catch (err) {
+        var msg = err.message || '';
+        if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+            showAuthError('login', 'Bağlantı hatası. Lütfen dış kaynaklara erişim izni verin.');
+        } else {
+            showAuthError('login', 'Giriş hatası: ' + msg);
+        }
+        setAuthLoading('btnLogin', false);
+    }
+}
+
+async function handleRegister() {
+    hideAuthError('register');
+    var name = document.getElementById('regName').value.trim();
+    var email = document.getElementById('regEmail').value.trim().toLowerCase();
+    var pass = document.getElementById('regPass').value;
+    var passConfirm = document.getElementById('regPassConfirm').value;
+
+    if (!name) { showAuthError('register', 'Lütfen adınızı girin.'); return; }
+    if (name.length < 2) { showAuthError('register', 'Ad en az 2 karakter olmalıdır.'); return; }
+    if (!email) { showAuthError('register', 'Lütfen Gmail adresinizi girin.'); return; }
+    if (!validateEmail(email)) { showAuthError('register', 'Geçerli bir Gmail adresi girin.'); return; }
+    if (!pass) { showAuthError('register', 'Lütfen bir şifre belirleyin.'); return; }
+    if (pass.length < 6) { showAuthError('register', 'Şifre en az 6 karakter olmalıdır.'); return; }
+    if (pass !== passConfirm) { showAuthError('register', 'Şifreler eşleşmiyor. Lütfen kontrol edin.'); return; }
+
+    setAuthLoading('btnRegister', true);
+    try {
+        // Aynı email ile kayıtlı kullanıcı var mı kontrol et
+        var existing = await SB.getRows(TABLE_NAME, 'select=gmail&gmail=eq.' + encodeURIComponent(email));
+
+        if (existing && existing.length > 0) {
+            showAuthError('register', 'Bu Gmail adresi zaten kayıtlı! Giriş ekranına yönlendiriliyorsunuz...');
+            setAuthLoading('btnRegister', false);
+            setTimeout(function() {
+                switchAuth('login');
+                document.getElementById('loginEmail').value = email;
+            }, 1500);
+            return;
+        }
+
+        var hashedPass = await hashPassword(pass);
+        
+        // Kullanıcıyı projeler tablosuna kaydet
+        var newUser = await SB.insertRow(TABLE_NAME, {
+            ad: name,
+            gmail: email,
+            sifre: hashedPass,
+            proje_adi: 'Kullanıcı Kaydı',
+            kategori: 'other',
+            created_at: new Date().toISOString()
+        });
+
+        setAuthLoading('btnRegister', false);
+        showToast('Kayıt başarılı! Otomatik giriş yapılıyor...', 'success');
+        
+        // Otomatik giriş yap
+        currentUser = { ad: name, gmail: email };
+        setTimeout(function() {
+            showMainApp();
+            showToast('Hoş geldiniz, ' + name + '!', 'success');
+        }, 1000);
+
+    } catch (err) {
+        var errMsg = err.message || '';
+        if (errMsg.includes('Failed to fetch') || errMsg.includes('NetworkError')) {
+            showAuthError('register', 'Bağlantı hatası. Lütfen dış kaynaklara erişim izni verin.');
+        } else if (errMsg.includes('duplicate') || errMsg.includes('unique')) {
+            showAuthError('register', 'Bu Gmail adresi zaten kayıtlı!');
+            setTimeout(function() { switchAuth('login'); }, 1500);
+        } else {
+            showAuthError('register', 'Kayıt hatası: ' + errMsg);
+        }
+        setAuthLoading('btnRegister', false);
+    }
+}
+
+/* ===== SCREEN MANAGEMENT ===== */
+function showMainApp() {
+    document.getElementById('authScreen').classList.remove('active');
+    document.getElementById('mainScreen').classList.add('active');
+
+    var initials = currentUser.ad.split(' ').map(function(w) { return w[0]; }).join('').toUpperCase().substring(0, 2);
+    document.getElementById('userAvatar').textContent = initials;
+    document.getElementById('userName').textContent = currentUser.ad;
+
+    loadGallery();
+}
+
+function handleLogout() {
+    currentUser = null;
+    projects = [];
+    filteredProjects = [];
+    document.getElementById('mainScreen').classList.remove('active');
+    document.getElementById('authScreen').classList.add('active');
+    document.getElementById('loginEmail').value = '';
+    document.getElementById('loginPass').value = '';
+    hideAuthError('login');
+    showToast('Başarıyla çıkış yapıldı.', 'success');
+}
+
+/* ===== GALLERY ===== */
+function renderSkeletons() {
+    var html = '<div class="gallery-grid">';
+    for (var i = 0; i < 6; i++) {
+        html += '<div class="skeleton-card"><div class="skel skel-img"></div>' +
+            '<div class="skel-body"><div class="skel skel-line w60"></div><div class="skel skel-line w40"></div></div></div>';
+    }
+    html += '</div>';
+    document.getElementById('galleryContent').innerHTML = html;
+}
+
+async function loadGallery() {
+    var refreshBtn = document.getElementById('btnRefresh');
+    refreshBtn.classList.add('spinning');
+    renderSkeletons();
+
+    try {
+        // Sadece gerçek projeleri getir (proje_adi 'Kullanıcı Kaydı' olmayanlar)
+        projects = await SB.getRows(TABLE_NAME, 'select=id,proje_adi,ogrenci_adi,sinif,kategori,aciklama,malzemeler,foto_path,foto_url,created_at&order=created_at.desc');
+
+        // Kullanıcı kayıtlarını filtrele (opsiyonel)
+        projects = projects.filter(p => p.proje_adi !== 'Kullanıcı Kaydı');
+
+        projects.forEach(function(p) {
+            if (p.foto_path && !p.foto_url) {
+                p.foto_url = SB.publicUrl(p.foto_path);
+            }
+        });
+
+        document.getElementById('projectCount').textContent = projects.length;
+        filterProjects();
+    } catch (err) {
+        var msg = err.message || '';
+        if (msg.includes('Failed to fetch') || msg.includes('NetworkError')) {
+            document.getElementById('galleryContent').innerHTML =
+                '<div class="empty-state"><i class="fas fa-wifi"></i><h3>Bağlantı Hatası</h3>' +
+                '<p>Dış kaynaklara erişim izni gerekiyor. Sayfayı yenileyip izin verin.</p></div>';
+        } else if (msg.includes('does not exist')) {
+            document.getElementById('galleryContent').innerHTML =
+                '<div class="empty-state"><i class="fas fa-database"></i><h3>Tablo Bulunamadı</h3>' +
+                '<p>Supabase\'de "' + TABLE_NAME + '" tablosunu oluşturmanız gerekiyor.</p></div>';
+        } else {
+            document.getElementById('galleryContent').innerHTML =
+                '<div class="empty-state"><i class="fas fa-exclamation-triangle"></i><h3>Hata</h3>' +
+                '<p>' + escapeHtml(msg) + '</p></div>';
+        }
+    }
+    refreshBtn.classList.remove('spinning');
+}
+
+function filterProjects() {
+    var searchTerm = document.getElementById('searchInput').value.trim().toLowerCase();
+    var categoryFilter = document.getElementById('filterCategory').value;
+
+    filteredProjects = projects.filter(function(p) {
+        var matchSearch = !searchTerm ||
+            (p.proje_adi && p.proje_adi.toLowerCase().indexOf(searchTerm) !== -1) ||
+            (p.ogrenci_adi && p.ogrenci_adi.toLowerCase().indexOf(searchTerm) !== -1) ||
+            (p.aciklama && p.aciklama.toLowerCase().indexOf(searchTerm) !== -1);
+        var matchCategory = !categoryFilter || p.kategori === categoryFilter;
+        return matchSearch && matchCategory;
+    });
+
+    renderGallery();
+}
+
+function renderGallery() {
+    if (!filteredProjects || filteredProjects.length === 0) {
+        if (projects.length > 0) {
+            document.getElementById('galleryContent').innerHTML =
+                '<div class="empty-state"><i class="fas fa-search"></i>' +
+                '<h3>Sonuç Bulunamadı</h3>' +
+                '<p>Arama kriterlerinize uygun proje bulunamadı. Filtreleri değiştirmeyi deneyin.</p></div>';
+        } else {
+            document.getElementById('galleryContent').innerHTML =
+                '<div class="empty-state"><i class="fas fa-rocket"></i>' +
+                '<h3>Henüz Proje Yüklenmemiş</h3>' +
+                '<p>Şu an görüntülenecek proje bulunmuyor.</p></div>';
+        }
+        return;
+    }
+
+    var html = '<div class="gallery-grid">';
+    filteredProjects.forEach(function(project, i) {
+        var cat = CATEGORIES[project.kategori] || CATEGORIES.other;
+        var imgSrc = project.foto_url || '';
+        var dateStr = project.created_at ? project.created_at.split('T')[0] : '';
+
+        html += '<div class="project-card" style="animation-delay:' + (i * 0.06) + 's" onclick="openProject(' + i + ')">' +
+            (imgSrc
+                ? '<img class="card-image" src="' + escapeHtml(imgSrc) + '" alt="' + escapeHtml(project.proje_adi) + '" loading="lazy" onerror="handleImgError(this)">'
+                : '<div class="card-image-placeholder"><i class="fas fa-image"></i><span>Fotoğraf yok</span></div>') +
+            '<div class="card-body">' +
+                '<div class="card-title">' + escapeHtml(project.proje_adi) + '</div>' +
+                '<div class="card-meta">' +
+                    '<span class="card-badge ' + cat.cls + '">' + cat.label + '</span>' +
+                    '<span class="card-date"><i class="far fa-calendar-alt"></i> ' + dateStr + '</span>' +
+                '</div>' +
+            '</div></div>';
+    });
+    html += '</div>';
+    document.getElementById('galleryContent').innerHTML = html;
+}
+
+/* ===== MODAL ===== */
+function openProject(index) {
+    currentProject = filteredProjects[index];
+    if (!currentProject) { return; }
+    var cat = CATEGORIES[currentProject.kategori] || CATEGORIES.other;
+    var modalImg = document.getElementById('modalImage');
+    if (currentProject.foto_url) {
+        modalImg.src = currentProject.foto_url;
+        modalImg.style.display = 'block';
+        modalImg.onerror = function() { this.onerror = null; this.style.display = 'none'; };
+    } else {
+        modalImg.style.display = 'none';
+    }
+    document.getElementById('modalTitle').textContent = currentProject.proje_adi;
+
+    var dateStr = currentProject.created_at ? currentProject.created_at.split('T')[0] : '';
+    var rows = [
+        { label: 'Öğrenci / Takım', value: currentProject.ogrenci_adi },
+        { label: 'Sınıf', value: currentProject.sinif },
+        { label: 'Kategori', value: cat.label },
+        { label: 'Açıklama', value: currentProject.aciklama },
+        { label: 'Malzemeler', value: currentProject.malzemeler },
+        { label: 'Tarih', value: dateStr }
+    ];
+
+    var infoHtml = '';
+    rows.forEach(function(row) {
+        if (row.value) {
+            infoHtml += '<div class="modal-row"><div class="modal-row-label">' + escapeHtml(row.label) +
+                '</div><div class="modal-row-value">' + escapeHtml(row.value) + '</div></div>';
+        }
+    });
+    document.getElementById('modalInfo').innerHTML = infoHtml;
+    document.getElementById('detailModal').classList.add('open');
+}
+
+function closeModal() {
+    document.getElementById('detailModal').classList.remove('open');
+    currentProject = null;
+}
+
+/* ===== EVENT LISTENERS ===== */
+document.getElementById('detailModal').addEventListener('click', function(e) {
+    if (e.target === this) { closeModal(); }
+});
+
+/* Enter key support for auth forms */
+document.getElementById('loginPass').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { handleLogin(); }
+});
+document.getElementById('regPassConfirm').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { handleRegister(); }
+});
+document.getElementById('loginEmail').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { document.getElementById('loginPass').focus(); }
+});
+
+/* ===== EMAILJS CONFIG ===== */
+/* ÖNEMLI: Aşağıdaki bilgileri EmailJS hesabınızdan almalısınız.
+   1. https://www.emailjs.com adresine gidin ve ücretsiz hesap oluşturun.
+   2. Email Services bölümünden Gmail servisinizi bağlayın (Service ID).
+   3. Email Templates bölümünden yeni bir şablon oluşturun.
+      Şablon içeriği örneği:
+         Konu: Enerji Dedektifi - Doğrulama Kodunuz
+         İçerik: Merhaba, doğrulama kodunuz: {{verification_code}}
+      Şablon değişkenleri: to_email, verification_code, app_name
+   4. Account > API Keys bölümünden Public Key'inizi alın.
+*/
+var EMAILJS_PUBLIC_KEY = 'LxsoaMv9bcuryi_fE';       // EmailJS Public Key
+var EMAILJS_SERVICE_ID = 'service_ccw29db';       // EmailJS Service ID
+var EMAILJS_TEMPLATE_ID = 'template_dh9zync';     // EmailJS Template ID
+
+(function() {
+    try { emailjs.init(EMAILJS_PUBLIC_KEY); } catch(e) { /* EmailJS yüklenemedi */ }
+})();
+
+/* ===== FORGOT PASSWORD STATE ===== */
+var forgotState = {
+    email: '',
+    code: '',
+    codeExpiry: null,
+    timerInterval: null,
+    currentStep: 1
+};
+
+/* ===== FORGOT PASSWORD FUNCTIONS ===== */
+function openForgotPassword() {
+    forgotState = { email: '', code: '', codeExpiry: null, timerInterval: null, currentStep: 1 };
+    document.getElementById('forgotEmailInput').value = '';
+    document.getElementById('forgotEmailError').classList.remove('visible');
+    document.getElementById('forgotCodeError').classList.remove('visible');
+    clearCodeInputs();
+    goForgotStep(1);
+    document.getElementById('forgotModal').classList.add('open');
+}
+
+function closeForgotPassword() {
+    document.getElementById('forgotModal').classList.remove('open');
+    if (forgotState.timerInterval) {
+        clearInterval(forgotState.timerInterval);
+        forgotState.timerInterval = null;
+    }
+}
+
+function goForgotStep(step) {
+    forgotState.currentStep = step;
+    for (var i = 1; i <= 3; i++) {
+        var stepEl = document.getElementById('forgotStep' + i);
+        stepEl.classList.toggle('active', i === step);
+    }
+    // Update dots
+    for (var d = 1; d <= 3; d++) {
+        var dot = document.getElementById('fDot' + d);
+        dot.classList.remove('active', 'done');
+        if (d === step) { dot.classList.add('active'); }
+        else if (d < step) { dot.classList.add('done'); }
+    }
+    for (var l = 1; l <= 2; l++) {
+        var line = document.getElementById('fLine' + l);
+        line.classList.toggle('done', l < step);
+    }
+}
+
+function generateCode() {
+    var code = '';
+    for (var i = 0; i < 8; i++) {
+        code += Math.floor(Math.random() * 10).toString();
+    }
+    return code;
+}
+
+function showForgotError(stepId, msg) {
+    var errorEl = document.getElementById(stepId + 'Error');
+    var textEl = document.getElementById(stepId + 'ErrorText');
+    textEl.textContent = msg;
+    errorEl.classList.add('visible');
+    errorEl.style.animation = 'none';
+    errorEl.offsetHeight;
+    errorEl.style.animation = '';
+}
+
+function hideForgotError(stepId) {
+    document.getElementById(stepId + 'Error').classList.remove('visible');
+}
+
+function setForgotLoading(btnId, loading) {
+    var btn = document.getElementById(btnId);
+    btn.disabled = loading;
+    if (loading) { btn.classList.add('loading'); }
+    else { btn.classList.remove('loading'); }
+}
+
+async function handleForgotSendCode() {
+    hideForgotError('forgotEmail');
+    var email = document.getElementById('forgotEmailInput').value.trim().toLowerCase();
+
+    if (!email) { showForgotError('forgotEmail', 'Lütfen Gmail adresinizi girin.'); return; }
+    if (!validateEmail(email)) { showForgotError('forgotEmail', 'Geçerli bir Gmail adresi girin.'); return; }
+
+    setForgotLoading('btnSendCode', true);
+    try {
+        // Supabase'de bu email var mı kontrol et
+        var existing = await SB.getRows(TABLE_NAME, 'select=gmail&gmail=eq.' + encodeURIComponent(email));
+
+        if (!existing || existing.length === 0) {
+            showForgotError('forgotEmail', 'Bu Gmail adresi ile kayıtlı bir hesap bulunamadı.');
+            setForgotLoading('btnSendCode', false);
+            return;
+        }
+
+        // 8 haneli kod oluştur
+        var code = generateCode();
+        forgotState.email = email;
+        forgotState.code = code;
+        forgotState.codeExpiry = Date.now() + 3 * 60 * 1000; // 3 dakika
+
+        // EmailJS ile kodu gönder
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: email,
+            verification_code: code,
+            app_name: 'Enerji Dedektifi - TÜBİTAK 4009'
+        });
+
+        setForgotLoading('btnSendCode', false);
+        document.getElementById('forgotSentAddr').textContent = email;
+        showToast('Doğrulama kodu ' + email + ' adresine gönderildi!', 'success');
+        goForgotStep(2);
+        startCodeTimer();
+        // İlk code input'a odaklan
+        var firstInput = document.querySelector('#codeInputsWrap .code-input-box');
+        if (firstInput) { firstInput.focus(); }
+
+    } catch (err) {
+        var errMsg = err.message || err.text || 'E-posta gönderilemedi.';
+        if (errMsg.indexOf('Failed to fetch') !== -1 || errMsg.indexOf('NetworkError') !== -1) {
+            showForgotError('forgotEmail', 'Bağlantı hatası. Lütfen dış kaynaklara erişim izni verin.');
+        } else {
+            showForgotError('forgotEmail', 'E-posta gönderme hatası: ' + errMsg);
+        }
+        setForgotLoading('btnSendCode', false);
+    }
+}
+
+function startCodeTimer() {
+    if (forgotState.timerInterval) { clearInterval(forgotState.timerInterval); }
+    document.getElementById('btnResend').disabled = true;
+
+    forgotState.timerInterval = setInterval(function() {
+        var remaining = Math.max(0, forgotState.codeExpiry - Date.now());
+        var minutes = Math.floor(remaining / 60000);
+        var seconds = Math.floor((remaining % 60000) / 1000);
+        document.getElementById('timerVal').textContent =
+            String(minutes).padStart(2, '0') + ':' + String(seconds).padStart(2, '0');
+
+        if (remaining <= 0) {
+            clearInterval(forgotState.timerInterval);
+            forgotState.timerInterval = null;
+            document.getElementById('timerVal').textContent = 'Süre doldu!';
+            document.getElementById('btnResend').disabled = false;
+        }
+    }, 1000);
+}
+
+async function handleResendCode() {
+    hideForgotError('forgotCode');
+    clearCodeInputs();
+    var code = generateCode();
+    forgotState.code = code;
+    forgotState.codeExpiry = Date.now() + 3 * 60 * 1000;
+
+    document.getElementById('btnResend').disabled = true;
+    try {
+        await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TEMPLATE_ID, {
+            to_email: forgotState.email,
+            verification_code: code,
+            app_name: 'Enerji Dedektifi - TÜBİTAK 4009'
+        });
+        showToast('Yeni doğrulama kodu gönderildi!', 'success');
+        startCodeTimer();
+    } catch (err) {
+        showToast('Kod gönderilemedi. Lütfen tekrar deneyin.', 'error');
+        document.getElementById('btnResend').disabled = false;
+    }
+}
+
+function clearCodeInputs() {
+    var inputs = document.querySelectorAll('#codeInputsWrap .code-input-box');
+    inputs.forEach(function(inp) {
+        inp.value = '';
+        inp.classList.remove('error-shake');
+    });
+}
+
+function getEnteredCode() {
+    var code = '';
+    var inputs = document.querySelectorAll('#codeInputsWrap .code-input-box');
+    inputs.forEach(function(inp) { code += inp.value; });
+    return code;
+}
+
+async function handleVerifyCode() {
+    hideForgotError('forgotCode');
+    var enteredCode = getEnteredCode();
+
+    if (enteredCode.length !== 8) {
+        showForgotError('forgotCode', 'Lütfen 8 haneli doğrulama kodunun tamamını girin.');
+        return;
+    }
+
+    // Süre kontrolü
+    if (Date.now() > forgotState.codeExpiry) {
+        showForgotError('forgotCode', 'Doğrulama kodunun süresi doldu. Lütfen yeni kod gönderin.');
+        document.getElementById('btnResend').disabled = false;
+        return;
+    }
+
+    // Kod doğrulama
+    if (enteredCode !== forgotState.code) {
+        showForgotError('forgotCode', 'Girilen kod hatalı! Lütfen tekrar kontrol edin.');
+        var inputs = document.querySelectorAll('#codeInputsWrap .code-input-box');
+        inputs.forEach(function(inp) {
+            inp.classList.add('error-shake');
+            setTimeout(function() { inp.classList.remove('error-shake'); }, 500);
+        });
+        return;
+    }
+
+    // Kod doğru! Hesabı Supabase'den sil
+    setForgotLoading('btnVerifyCode', true);
+    try {
+        await SB.deleteRows(TABLE_NAME, 'gmail=eq.' + encodeURIComponent(forgotState.email));
+
+        setForgotLoading('btnVerifyCode', false);
+        if (forgotState.timerInterval) {
+            clearInterval(forgotState.timerInterval);
+            forgotState.timerInterval = null;
+        }
+        showToast('Hesap başarıyla silindi!', 'success');
+        goForgotStep(3);
+
+    } catch (err) {
+        var delErr = err.message || 'Hesap silme işlemi başarısız oldu.';
+        showForgotError('forgotCode', 'Hesap silme hatası: ' + delErr);
+        setForgotLoading('btnVerifyCode', false);
+    }
+}
+
+function forgotGoToRegister() {
+    closeForgotPassword();
+    switchAuth('register');
+    // Email alanını önceden doldur
+    document.getElementById('regEmail').value = forgotState.email;
+    showToast('Yeni hesabınızı oluşturabilirsiniz.', 'success');
+}
+
+/* ===== CODE INPUT BOX EVENTS ===== */
+(function setupCodeInputs() {
+    var inputs = document.querySelectorAll('#codeInputsWrap .code-input-box');
+    inputs.forEach(function(inp, idx) {
+        inp.addEventListener('input', function(e) {
+            var val = this.value.replace(/[^0-9]/g, '');
+            this.value = val ? val[0] : '';
+            if (val && idx < inputs.length - 1) {
+                inputs[idx + 1].focus();
+            }
+            // Otomatik doğrulama: tüm kutular doluysa
+            if (getEnteredCode().length === 8) {
+                // Kısa bir gecikme ile doğrula
+                setTimeout(function() { handleVerifyCode(); }, 200);
+            }
+        });
+        inp.addEventListener('keydown', function(e) {
+            if (e.key === 'Backspace' && !this.value && idx > 0) {
+                inputs[idx - 1].focus();
+                inputs[idx - 1].value = '';
+            }
+            if (e.key === 'ArrowLeft' && idx > 0) { inputs[idx - 1].focus(); }
+            if (e.key === 'ArrowRight' && idx < inputs.length - 1) { inputs[idx + 1].focus(); }
+        });
+        inp.addEventListener('paste', function(e) {
+            e.preventDefault();
+            var paste = (e.clipboardData || window.clipboardData).getData('text').replace(/[^0-9]/g, '');
+            for (var i = 0; i < Math.min(paste.length, 8); i++) {
+                if (inputs[i]) { inputs[i].value = paste[i]; }
+            }
+            var focusIdx = Math.min(paste.length, 7);
+            inputs[focusIdx].focus();
+            if (paste.length >= 8) {
+                setTimeout(function() { handleVerifyCode(); }, 200);
+            }
+        });
+    });
+})();
+
+/* Forgot modal overlay tıklama ile kapatma */
+document.getElementById('forgotModal').addEventListener('click', function(e) {
+    if (e.target === this) { closeForgotPassword(); }
+});
+
+/* Forgot email input enter key */
+document.getElementById('forgotEmailInput').addEventListener('keydown', function(e) {
+    if (e.key === 'Enter') { handleForgotSendCode(); }
+});
+</script>
+</body>
+</html>
