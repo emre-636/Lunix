@@ -1,0 +1,848 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+<title>Lunix | FizikCep v2.6</title>
+<link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800;900&family=Orbitron:wght@400;500;600;700;800;900&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{margin:0;padding:0;box-sizing:border-box}
+:root{
+--orange:#ff6b35;--orange-light:#ff8a5c;--amber:#ff9800;--gold:#ffc107;
+--red:#e53935;--deep-red:#c62828;--crimson:#d50000;
+--bg:#0a0a0a;--bg-secondary:#111111;--bg-card:rgba(10,10,10,0.65);
+--bg-card-hover:rgba(20,20,20,0.8);--border:rgba(255,107,53,0.15);
+--border-hover:rgba(255,107,53,0.45);--text:#ffffff;--text-sec:#d0d0d0;--text-dim:#909090;
+}
+html{scroll-behavior:smooth}
+body{font-family:'Outfit',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;overflow:hidden;-webkit-font-smoothing:antialiased}
+::-webkit-scrollbar{width:5px}
+::-webkit-scrollbar-track{background:transparent}
+::-webkit-scrollbar-thumb{background:rgba(255,107,53,0.25);border-radius:10px}
+::-webkit-scrollbar-thumb:hover{background:rgba(255,107,53,0.45)}
+
+/* ===== ARKA PLAN RESMI (INTRO VE TANITIM HARIC) ===== */
+body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background-image: url('1.png');
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    background-attachment: fixed;
+    opacity: 0.50;
+    pointer-events: none;
+    filter: blur(1px) brightness(1);
+}
+body.intro-active::before,
+body.showcase-active::before { opacity: 0; }
+
+/* ===== BACKGROUND ORBS ===== */
+#bg-layer{position:fixed;inset:0;z-index:1;pointer-events:none;overflow:hidden}
+.orb{position:absolute;border-radius:50%;filter:blur(120px)}
+.orb-1{width:520px;height:520px;background:var(--orange);top:-180px;right:-120px;opacity:.05;animation:oF1 28s infinite ease-in-out}
+.orb-2{width:420px;height:420px;background:var(--red);bottom:-120px;left:-100px;opacity:.04;animation:oF2 32s infinite ease-in-out}
+.orb-3{width:300px;height:300px;background:var(--amber);top:45%;left:45%;opacity:.03;animation:oF3 22s infinite ease-in-out}
+@keyframes oF1{0%,100%{transform:translate(0,0)}33%{transform:translate(-70px,50px)}66%{transform:translate(50px,-40px)}}
+@keyframes oF2{0%,100%{transform:translate(0,0)}33%{transform:translate(50px,-70px)}66%{transform:translate(-40px,50px)}}
+@keyframes oF3{0%,100%{transform:scale(1)}50%{transform:scale(1.4)}}
+#bg-layer::after{content:'';position:absolute;inset:0;background-image:linear-gradient(rgba(255,107,53,0.018)1px,transparent 1px),linear-gradient(90deg,rgba(255,107,53,0.018)1px,transparent 1px);background-size:64px 64px}
+
+/* ===== INTRO ===== */
+#intro{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;background:var(--bg);transition:opacity .7s cubic-bezier(.4,0,.2,1);overflow:hidden}
+#intro.fade-out{opacity:0;pointer-events:none}
+.i-line{position:absolute;height:1px;background:linear-gradient(90deg,transparent,var(--orange),transparent);opacity:0;animation:iLine 2s forwards}
+.i-line:nth-child(1){width:320px;top:28%;left:8%;animation-delay:.05s;transform:rotate(12deg)}
+.i-line:nth-child(2){width:240px;top:48%;right:12%;animation-delay:.15s;transform:rotate(-8deg)}
+.i-line:nth-child(3){width:280px;bottom:32%;left:18%;animation-delay:.1s;transform:rotate(4deg)}
+.i-line:nth-child(4){width:200px;top:22%;right:22%;animation-delay:.2s;transform:rotate(-15deg)}
+.i-line:nth-child(5){width:260px;bottom:22%;right:8%;animation-delay:.25s;transform:rotate(7deg)}
+.i-line:nth-child(6){width:180px;top:65%;left:5%;animation-delay:.12s;transform:rotate(-5deg)}
+@keyframes iLine{0%{opacity:0;transform:scaleX(0)}20%{opacity:.5;transform:scaleX(1)}80%{opacity:.5}100%{opacity:0}}
+.i-content{text-align:center;position:relative;z-index:2}
+.i-logo{font-family:'Orbitron',sans-serif;font-size:clamp(2.8rem,10vw,5.5rem);font-weight:900;letter-spacing:.25em;position:relative;opacity:0;animation:iLogoIn 1s .4s forwards cubic-bezier(.16,1,.3,1)}
+.i-logo-main{background:linear-gradient(135deg,var(--orange),var(--gold),var(--orange));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;position:relative;z-index:1}
+.i-logo-glow{position:absolute;inset:0;background:linear-gradient(135deg,var(--orange),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text;filter:blur(25px);opacity:.6;z-index:0}
+@keyframes iLogoIn{from{opacity:0;transform:scale(.7) translateY(10px)}to{opacity:1;transform:scale(1) translateY(0)}}
+.i-sub{font-size:clamp(.8rem,2.8vw,1.2rem);font-weight:300;letter-spacing:.4em;text-transform:uppercase;color:var(--text-sec);margin-top:14px;opacity:0;animation:iFadeUp .7s 1.1s forwards}
+.i-badge{display:inline-block;margin-top:28px;padding:7px 22px;border:1px solid var(--border);border-radius:100px;font-size:.7rem;font-weight:600;letter-spacing:.25em;text-transform:uppercase;color:var(--text-dim);opacity:0;animation:iFadeUp .7s 1.5s forwards}
+.i-quote{font-size:clamp(.8rem,2.2vw,1rem);font-weight:300;font-style:italic;color:var(--text-sec);margin-top:28px;opacity:0;animation:iFadeUp .8s 1.8s forwards;letter-spacing:.04em;max-width:460px;line-height:1.5}
+@keyframes iFadeUp{from{opacity:0;transform:translateY(12px)}to{opacity:1;transform:translateY(0)}}
+.i-scan{position:absolute;left:0;width:100%;height:2px;background:linear-gradient(90deg,transparent 0%,var(--orange) 50%,transparent 100%);opacity:0;animation:iScan 1.8s .2s forwards;z-index:3}
+@keyframes iScan{0%{top:0;opacity:.7}100%{top:100%;opacity:0}}
+
+/* ===== SHOWCASE (TANITIM KARTI) ===== */
+#showcase{position:fixed;inset:0;z-index:190;display:flex;align-items:center;justify-content:center;background:var(--bg);transition:opacity .5s ease, visibility .5s ease;overflow-y:auto;padding:16px}
+#showcase.hidden{opacity:0;visibility:hidden;pointer-events:none}
+.sc-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:24px 22px;max-width:420px;width:100%;backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);position:relative;overflow:hidden;box-shadow:0 16px 48px rgba(0,0,0,0.5);animation:scIn .5s cubic-bezier(.16,1,.3,1)}
+.sc-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold),var(--red));opacity:.7}
+.sc-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,rgba(255,107,53,0.05),transparent 70%);pointer-events:none}
+@keyframes scIn{from{opacity:0;transform:translateY(20px) scale(.97)}to{opacity:1;transform:translateY(0) scale(1)}}
+.sc-title{font-size:clamp(1.1rem,3vw,1.5rem);font-weight:700;letter-spacing:.03em;margin-bottom:4px;color:var(--text)}
+.sc-subtitle{font-size:.65rem;font-weight:600;letter-spacing:.18em;text-transform:uppercase;color:var(--orange);margin-bottom:18px}
+.sc-text{font-size:.74rem;line-height:1.6;color:var(--text-sec);margin-bottom:20px}
+.sc-text p{margin-bottom:6px;position:relative;padding-left:16px}
+.sc-text p::before{content:'—';position:absolute;left:0;color:var(--orange);font-size:.65rem;top:1px}
+.sc-actions{display:flex;align-items:center;gap:10px;flex-wrap:wrap}
+.sc-btn{flex:1;min-width:130px;padding:11px 20px;border-radius:10px;border:none;background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;font-family:'Outfit',sans-serif;font-size:.8rem;font-weight:600;letter-spacing:.05em;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden}
+.sc-btn:hover{transform:translateY(-2px);box-shadow:0 8px 24px rgba(255,107,53,0.3)}
+.sc-btn:active{transform:translateY(0)}
+.sc-dismiss{background:transparent;border:1px solid var(--border);color:var(--text-dim);padding:9px 16px;border-radius:10px;font-family:'Outfit',sans-serif;font-size:.7rem;font-weight:500;letter-spacing:.03em;cursor:pointer;transition:all .3s ease;white-space:nowrap}
+.sc-dismiss:hover{border-color:var(--border-hover);color:var(--text-sec);background:rgba(255,107,53,0.05)}
+
+/* ===== INFO BUTONU ===== */
+#info-btn{position:fixed;top:16px;right:16px;z-index:60;width:38px;height:38px;border-radius:50%;border:1px solid rgba(255,107,53,0.3);background:rgba(10,10,10,0.6);backdrop-filter:blur(10px);-webkit-backdrop-filter:blur(10px);color:var(--orange);font-family:'Outfit',sans-serif;font-size:1rem;font-weight:700;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all .3s ease;opacity:0;visibility:hidden;transform:translateY(-10px)}
+#info-btn.show{opacity:1;visibility:visible;transform:translateY(0)}
+#info-btn:hover{background:var(--orange);color:#fff;border-color:var(--orange);box-shadow:0 4px 16px rgba(255,107,53,0.3)}
+
+/* ===== INFO MODAL ===== */
+#info-modal{position:fixed;inset:0;z-index:170;background:rgba(0,0,0,0.8);display:flex;align-items:center;justify-content:center;opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease;padding:16px;backdrop-filter:blur(4px);-webkit-backdrop-filter:blur(4px)}
+#info-modal.active{opacity:1;visibility:visible}
+.info-card{background:var(--bg-card);border:1px solid var(--border);border-radius:16px;padding:28px 24px;max-width:480px;width:100%;backdrop-filter:blur(16px);-webkit-backdrop-filter:blur(16px);position:relative;box-shadow:0 20px 60px rgba(0,0,0,0.6);max-height:85vh;overflow-y:auto}
+.info-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:linear-gradient(90deg,var(--orange),var(--gold),var(--red));opacity:.8}
+.info-title{font-family:'Orbitron',sans-serif;font-size:1.3rem;font-weight:700;letter-spacing:.08em;margin-bottom:6px;background:linear-gradient(135deg,var(--orange),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.info-subtitle{font-size:.7rem;font-weight:600;letter-spacing:.15em;text-transform:uppercase;color:var(--text-dim);margin-bottom:20px}
+.info-section{margin-bottom:16px}
+.info-section h3{font-size:.8rem;font-weight:700;letter-spacing:.08em;color:var(--orange);margin-bottom:8px;text-transform:uppercase}
+.info-section p,.info-section li{font-size:.75rem;line-height:1.6;color:var(--text-sec);margin-bottom:4px}
+.info-section ul{list-style:none;padding:0}
+.info-section ul li{padding-left:16px;position:relative}
+.info-section ul li::before{content:'•';position:absolute;left:0;color:var(--orange);font-size:.7rem}
+.info-close{position:absolute;top:12px;right:12px;width:30px;height:30px;border-radius:50%;border:1px solid var(--border);background:rgba(10,10,10,0.6);color:var(--text-dim);cursor:pointer;display:flex;align-items:center;justify-content:center;font-size:.9rem;transition:all .3s ease;z-index:2}
+.info-close:hover{border-color:var(--border-hover);color:var(--orange);background:rgba(255,107,53,0.1)}
+.info-feedback-btn{display:block;width:100%;margin-top:20px;padding:12px 20px;border-radius:10px;border:1px solid var(--border-hover);background:rgba(255,107,53,0.08);color:var(--orange);font-family:'Outfit',sans-serif;font-size:.78rem;font-weight:600;letter-spacing:.04em;cursor:pointer;transition:all .3s ease;text-align:center;text-decoration:none}
+.info-feedback-btn:hover{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;border-color:transparent;transform:translateY(-2px);box-shadow:0 6px 20px rgba(255,107,53,0.3)}
+
+/* ===== PAGES ===== */
+.page{position:fixed;inset:0;z-index:10;opacity:0;visibility:hidden;transition:opacity .45s ease,visibility .45s ease;overflow-y:auto;overflow-x:hidden;backdrop-filter:blur(0px);}
+.page.active{opacity:1;visibility:visible}
+
+/* ===== MAIN MENU ===== */
+#main-menu{display:flex;flex-direction:column;align-items:center;padding:32px 20px 140px}
+.m-header{text-align:center;margin-bottom:44px;padding-top:16px}
+.m-brand{font-family:'Orbitron',sans-serif;font-size:1.4rem;font-weight:800;letter-spacing:.35em;background:linear-gradient(135deg,var(--orange),var(--gold));-webkit-background-clip:text;-webkit-text-fill-color:transparent;background-clip:text}
+.m-tagline{font-size:.75rem;font-weight:300;letter-spacing:.3em;text-transform:uppercase;color:var(--text-dim);margin-top:6px}
+.m-section{font-size:.65rem;font-weight:700;letter-spacing:.25em;text-transform:uppercase;color:var(--text-dim);margin-bottom:16px;margin-top:36px;width:100%;max-width:860px;padding-left:4px}
+.m-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(190px,1fr));gap:14px;width:100%;max-width:860px}
+.m-footer{margin-top:48px;text-align:center}
+.m-footer-badge{display:inline-block;padding:8px 24px;border:1px solid var(--border);border-radius:100px;font-size:.65rem;font-weight:500;letter-spacing:.2em;text-transform:uppercase;color:var(--text-dim);background:rgba(10,10,10,0.3);backdrop-filter:blur(4px);}
+
+/* ===== CLASS CARDS ===== */
+.c-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
+.c-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--card-accent);opacity:0;transition:opacity .3s ease}
+.c-card::after{content:'';position:absolute;inset:0;background:radial-gradient(circle at 50% 0%,var(--card-glow),transparent 70%);opacity:0;transition:opacity .3s ease;pointer-events:none}
+.c-card:hover{background:var(--bg-card-hover);border-color:var(--border-hover);transform:translateY(-3px);backdrop-filter:blur(12px);}
+.c-card:hover::before{opacity:1}
+.c-card:hover::after{opacity:1}
+.c-card:active{transform:translateY(-1px);transition:transform .1s ease}
+.c-num{font-family:'Orbitron',sans-serif;font-size:2rem;font-weight:900;line-height:1}
+.c-label{font-size:.82rem;font-weight:500;color:var(--text-sec);margin-top:6px;letter-spacing:.03em}
+.c-count{font-size:.68rem;color:var(--text-dim);margin-top:10px}
+.c-card[data-g="9"]{--card-accent:#ff6b35;--card-glow:rgba(255,107,53,0.08)}
+.c-card[data-g="9"] .c-num{color:#ff6b35}
+.c-card[data-g="10"]{--card-accent:#ff9800;--card-glow:rgba(255,152,0,0.08)}
+.c-card[data-g="10"] .c-num{color:#ff9800}
+.c-card[data-g="11"]{--card-accent:#e53935;--card-glow:rgba(229,57,53,0.08)}
+.c-card[data-g="11"] .c-num{color:#e53935}
+.c-card[data-g="12"]{--card-accent:#d50000;--card-glow:rgba(213,0,0,0.08)}
+.c-card[data-g="12"] .c-num{color:#d50000}
+
+/* ===== FEATURE CARDS ===== */
+.f-card{background:var(--bg-card);border:1px solid var(--border);border-radius:14px;padding:24px 20px;cursor:pointer;transition:all .3s ease;position:relative;overflow:hidden;backdrop-filter:blur(8px);}
+.f-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;background:var(--f-accent);opacity:0;transition:opacity .3s ease}
+.f-card:hover{background:var(--bg-card-hover);border-color:var(--border-hover);transform:translateY(-3px);backdrop-filter:blur(12px);}
+.f-card:hover::before{opacity:1}
+.f-card:active{transform:translateY(-1px);transition:transform .1s ease}
+.f-title{font-size:1rem;font-weight:600;letter-spacing:.02em}
+.f-desc{font-size:.72rem;color:var(--text-dim);margin-top:5px;letter-spacing:.02em}
+.f-sim{--f-accent:linear-gradient(90deg,#ff6b35,#e53935)}
+.f-sim .f-title{color:#ff6b35}
+.f-uni{--f-accent:linear-gradient(90deg,#ffc107,#ff9800)}
+.f-uni .f-title{color:#ffc107}
+
+/* ===== SUB PAGES ===== */
+.sub-wrap{padding:0 20px 120px}
+.sub-head{position:sticky;top:0;z-index:10;display:flex;align-items:center;gap:14px;padding:18px 0;background:linear-gradient(180deg, rgba(10,10,10,0.9) 60%, rgba(10,10,10,0));backdrop-filter:blur(4px);}
+.back-btn{width:38px;height:38px;border-radius:10px;border:1px solid var(--border);background:rgba(10,10,10,0.6);backdrop-filter:blur(8px);color:var(--text);display:flex;align-items:center;justify-content:center;cursor:pointer;transition:all .2s ease;flex-shrink:0;font-size:1rem;font-family:'Outfit',sans-serif}
+.back-btn:hover{border-color:var(--border-hover);background:var(--bg-card-hover);color:var(--orange)}
+.sub-title{font-family:'Orbitron',sans-serif;font-size:clamp(.85rem,3.5vw,1.3rem);font-weight:700;letter-spacing:.12em}
+.u-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(280px,1fr));gap:10px}
+.u-card{background:var(--bg-card);border:1px solid var(--border);border-radius:11px;padding:18px 20px;cursor:pointer;transition:all .25s ease;display:flex;align-items:center;gap:14px;backdrop-filter:blur(8px);}
+.u-card:hover{background:var(--bg-card-hover);border-color:var(--border-hover);transform:translateX(5px);backdrop-filter:blur(12px);}
+.u-card:active{transform:translateX(2px);transition:transform .1s ease}
+.u-idx{font-family:'Orbitron',sans-serif;font-size:.72rem;font-weight:700;color:var(--text-dim);min-width:26px;transition:color .25s ease}
+.u-name{font-size:.88rem;font-weight:500;flex:1}
+.u-arrow{color:var(--text-dim);transition:all .25s ease;font-size:.75rem;font-weight:300}
+.u-card:hover .u-arrow{color:var(--orange);transform:translateX(3px)}
+.u-card:hover .u-idx{color:var(--orange)}
+.stg{opacity:0;transform:translateY(16px);animation:stgIn .45s forwards}
+@keyframes stgIn{to{opacity:1;transform:translateY(0)}}
+
+/* ===== IFRAME ===== */
+#iframe-box{position:fixed;inset:0;z-index:150;background:var(--bg);opacity:0;visibility:hidden;transition:opacity .35s ease,visibility .35s ease}
+#iframe-box.active{opacity:1;visibility:visible}
+#iframe-box iframe{width:100%;height:100%;border:none}
+.iframe-loading{position:absolute;top:50%;left:50%;transform:translate(-50%,-50%);display:flex;flex-direction:column;align-items:center;gap:16px}
+.spinner{width:32px;height:32px;border:2px solid rgba(255,107,53,0.15);border-top-color:var(--orange);border-radius:50%;animation:spin .7s linear infinite}
+@keyframes spin{to{transform:rotate(360deg)}}
+.iframe-loading span{font-size:.75rem;color:var(--text-dim);letter-spacing:.15em;font-weight:400}
+.exit-btn{position:absolute;top:10px;right:10px;width:34px;height:34px;border-radius:9px;border:1px solid rgba(255,107,53,0.35);background:rgba(10,10,10,0.88);backdrop-filter:blur(12px);-webkit-backdrop-filter:blur(12px);color:var(--orange);font-size:.85rem;font-weight:700;cursor:pointer;z-index:160;display:flex;align-items:center;justify-content:center;transition:all .2s ease;font-family:'Outfit',sans-serif;line-height:1}
+.exit-btn:hover{background:var(--orange);color:var(--bg);border-color:var(--orange)}
+@media (orientation: portrait) {
+  .exit-btn { display: none; }
+}
+
+/* ===== Lunix AI ===== */
+#Lunix-btn{position:fixed;bottom:22px;right:22px;z-index:50;padding:12px 22px;border-radius:100px;border:1px solid rgba(255,107,53,0.25);background:rgba(10,10,10,0.6);backdrop-filter:blur(14px);-webkit-backdrop-filter:blur(14px);color:var(--orange);font-family:'Orbitron',sans-serif;font-size:.7rem;font-weight:700;letter-spacing:.15em;cursor:pointer;transition:all .3s ease;opacity:0;visibility:hidden;transform:translateY(10px)}
+#Lunix-btn.show{opacity:1;visibility:visible;transform:translateY(0)}
+#Lunix-btn:hover{background:linear-gradient(135deg,var(--orange),var(--red));color:#fff;border-color:transparent;box-shadow:0 6px 28px rgba(255,107,53,0.3);transform:translateY(-2px)}
+#Lunix-btn::after{content:'';position:absolute;inset:-1px;border-radius:100px;box-shadow:0 0 0 0 rgba(255,107,53,0.3);animation:LunixPulse 2.5s infinite}
+@keyframes LunixPulse{0%,100%{box-shadow:0 0 0 0 rgba(255,107,53,0.25)}50%{box-shadow:0 0 0 8px rgba(255,107,53,0)}}
+
+/* ===== RESPONSIVE ===== */
+@media(max-width:640px){
+.m-grid{grid-template-columns:1fr 1fr;gap:10px}
+.c-card{padding:18px 14px}
+.c-num{font-size:1.5rem}
+.c-label{font-size:.74rem}
+.u-grid{grid-template-columns:1fr}
+#main-menu{padding:20px 14px 140px}
+.m-header{margin-bottom:32px}
+.m-section{margin-top:24px}
+.sc-card{padding:20px 16px}
+.sc-text{font-size:.7rem}
+.sc-title{font-size:1rem}
+}
+@media(max-width:380px){
+.m-grid{grid-template-columns:1fr;gap:10px}
+.sc-actions{flex-direction:column}
+.sc-btn{width:100%}
+}
+</style>
+</head>
+<body class="intro-active" id="bodyEl">
+
+<!-- BACKGROUND LAYER -->
+<div id="bg-layer">
+<div class="orb orb-1"></div>
+<div class="orb orb-2"></div>
+<div class="orb orb-3"></div>
+</div>
+
+<!-- INTRO -->
+<div id="intro">
+<div class="i-line"></div>
+<div class="i-line"></div>
+<div class="i-line"></div>
+<div class="i-line"></div>
+<div class="i-line"></div>
+<div class="i-line"></div>
+<div class="i-scan"></div>
+<div class="i-content">
+<div class="i-logo">
+<span class="i-logo-glow" aria-hidden="true">LUNIX</span>
+<span class="i-logo-main">LUNIX</span>
+</div>
+<div class="i-sub">FizikCep  v2.6</div>
+<div class="i-quote" id="i-quote"></div>
+<div class="i-badge">TUBITAK 4006</div>
+</div>
+</div>
+
+<!-- SHOWCASE (TANITIM KARTI) -->
+<div id="showcase" class="hidden">
+<div class="sc-card">
+<div class="sc-title">Fizigi Anla, Deneyimle</div>
+<div class="sc-subtitle">FizikCep v2.6</div>
+<div class="sc-text">
+<p>FizikCep, 9–12. sinif fizik konularina hizli ve duzenli erisim sunan bir ogrenme platformudur.</p>
+<p>Sinifini secerek istedigin konuya ulasabilir, icerikleri adim adim inceleyebilirsin.</p>
+<p>Konular, interaktif simulasyonlarla desteklenerek fizik olaylarini gercek zamanli olarak gozlemleme imkani saglar.</p>
+<p>Grafik ve analiz araclari sayesinde ogrendiklerini yorumlayarak daha kalici hale getirebilirsin.</p>
+<p>TYT–AYT odakli icerikler ve soru araclari ile sinavlara etkili sekilde hazirlanabilir, Lunix AI destegi ile anlamadigin noktalari aninda ogrenebilirsin.</p>
+<p>FizikCep, fizigi ezberlemek yerine anlayarak ogrenmen icin tasarlandi.</p>
+</div>
+<div class="sc-actions">
+<button class="sc-btn" onclick="startApp()">Hemen Basla</button>
+<button class="sc-dismiss" onclick="dismissShowcase()">Tekrar gosterme</button>
+</div>
+</div>
+</div>
+
+<!-- INFO BUTTON -->
+<button id="info-btn" onclick="openInfo()" title="Bilgi">i</button>
+
+<!-- INFO MODAL -->
+<div id="info-modal">
+<div class="info-card">
+<button class="info-close" onclick="closeInfo()">✕</button>
+<div class="info-title">FizikCep v2.6</div>
+<div class="info-subtitle">Lunix Studio Tarafindan Gelistirilmistir</div>
+<div class="info-section">
+<h3>Uygulama Hakkinda</h3>
+<p>FizikCep, 9–12. sinif fizik konularina hizli ve duzenli erisim sunan kapsamli bir ogrenme platformudur. Interaktif simulasyonlar, grafik araclari ve yapay zeka destegi ile fizik ogrenmeyi kolaylastirir.</p>
+</div>
+<div class="info-section">
+<h3>Ozellikler</h3>
+<ul>
+<li>9, 10, 11 ve 12. sinif fizik konularinin tamami</li>
+<li>10 farkli interaktif simulasyon araci</li>
+<li>TYT ve AYT hazirlik modulleri</li>
+<li>Lunix AI ile yapay zeka destegi</li>
+<li>Problem cozucu ve soru uretici araclar</li>
+</ul>
+</div>
+<div class="info-section">
+<h3>TUBITAK 4006 Bilim Fuari</h3>
+<p>Bu uygulama TUBITAK 4006 Bilim Fuari projesi kapsaminda Lunix Studio tarafindan gelistirilmistir. Amacimiz, fizik egitimini daha erisilebilir ve interaktif hale getirerek ogrencilerin bilimsel dusunme becerilerini gelistirmektir.</p>
+</div>
+<div class="info-section">
+<h3>Gelistirici</h3>
+<p><strong>Lunix Studio</strong><br>Surum: v2.6<br>Lisans: TUBITAK 4006 Projesi</p>
+</div>
+<a class="info-feedback-btn" href="mailto:34tf344@gmail.com?subject=FizikCep%20Geri%20Bildirim&body=Merhaba%20Lunix%20Studio%20Ekibi," target="_blank">
+Geri Bildirim Gonder
+</a>
+</div>
+</div>
+
+<!-- MAIN MENU -->
+<div id="main-menu" class="page">
+<div class="m-header">
+<div class="m-brand">LUNIX</div>
+<div class="m-tagline">FizikCep  v2.6</div>
+</div>
+<div class="m-section">SINIFLAR</div>
+<div class="m-grid" id="cls-grid"></div>
+<div class="m-section">ARACLAR</div>
+<div class="m-grid" id="tool-grid"></div>
+<div class="m-footer"><span class="m-footer-badge">TUBITAK 4006 Bilim Fuari Projesi</span></div>
+</div>
+
+<!-- CLASS PAGE -->
+<div id="class-page" class="page">
+<div class="sub-wrap">
+<div class="sub-head">
+<button class="back-btn" onclick="navMenu()">&#8592;</button>
+<div class="sub-title" id="cp-title"></div>
+</div>
+<div class="u-grid" id="cp-units"></div>
+</div>
+</div>
+
+<!-- SIMULATIONS PAGE -->
+<div id="sim-page" class="page">
+<div class="sub-wrap">
+<div class="sub-head">
+<button class="back-btn" onclick="navMenu()">&#8592;</button>
+<div class="sub-title" style="color:var(--orange)">SIMULASYONLAR</div>
+</div>
+<div class="u-grid" id="sp-list"></div>
+</div>
+</div>
+
+<!-- UNIVERSITY PAGE -->
+<div id="uni-page" class="page">
+<div class="sub-wrap">
+<div class="sub-head">
+<button class="back-btn" onclick="navMenu()">&#8592;</button>
+<div class="sub-title" style="color:var(--gold)">UNIVERSITEYE HAZIRLIK</div>
+</div>
+<div class="u-grid" id="up-list"></div>
+</div>
+</div>
+
+<!-- IFRAME CONTAINER -->
+<div id="iframe-box">
+<div class="iframe-loading" id="iframe-load">
+<div class="spinner"></div>
+<span>Yukleniyor</span>
+</div>
+<button class="exit-btn" onclick="closeFrame()">&#10005;</button>
+<iframe id="frame" src="about:blank" allow="fullscreen"></iframe>
+</div>
+
+<!-- Lunix AI BUTTON -->
+<button id="Lunix-btn" onclick="openLunix()">Lunix AI</button>
+
+<script>
+// ================================================================
+//  FIZIK SOZLERI (20 FARKLI SOZ - HER ACILISTA RASTGELE)
+// ================================================================
+var FIZIK_SOZLERI = [
+    "Fizik, evrenin dilidir; onu anlamak, doganin sirlarini kesfetmektir.",
+    "Evren bir kitaptir ve fizik onun alfabesidir.",
+    "Fizik, merakli zihinlerin dogaya sordugu sorularin cevabidir.",
+    "Dogayi anlamak icin once onun kurallarini bilmek gerekir.",
+    "Fizik, gorunmeyeni gorme sanatidir.",
+    "Her dusen elma yercekimi anlatmaz, ama her merakli zihin fizigi kesfeder.",
+    "Fizik, evrenin siiridir; matematik ise onun dilidir.",
+    "Dogadaki her olay, cozulmeyi bekleyen bir denklemdir.",
+    "Fizik bilmek, doganin sifrelerini cozmektir.",
+    "Evrenin isleyisini anlamak, insanligin en buyuk basarisidir.",
+    "Fizik, karmasik gorunenin ardindaki sadeliktir.",
+    "Bir fizikci icin evren, en buyuk laboratuvardir.",
+    "Fizik ogrenmek, dogayi sevmektir.",
+    "Her buyuk kesif, kucuk bir merakla baslar.",
+    "Fizik, gokyuzundeki yildizlardan atomun icindeki parcalara kadar her seyi aciklar.",
+    "Dogayi gozlemleyen herkes, farkinda olmadan fizik yapar.",
+    "Fizik, imkansiz gibi goruneni mumkun kilma bilimidir.",
+    "Evrenin yasalari degismez; onlari anlamak bize guc verir.",
+    "Fizik, bilimin temelidir; diger tum bilimler onun uzerinde yukselir.",
+    "Dogada her sey bir neden-sonuc iliskisi icindedir; fizik bu iliskiyi aciklar."
+];
+
+// ================================================================
+//  SITE URL YAPILANDIRMASI
+// ================================================================
+
+var URLS = {
+
+    // 9. Sinif (siralamasi ters cevirildi: 4,3,2,1)
+    '9_enerji':                   'https://enerji.edgeone.app',
+    '9_akiskanlar':               'https://akiskanlar.edgeone.app/',
+    '9_kuvvet_hareket':           'https://kuvvetveharaket.edgeone.app/',
+    '9_fizik_kariyer':            'https://fizikbilimivekariyerkesfi.edgeone.app/',
+
+    // 10. Sinif
+    '10_kuvvet_hareket':          'https://kuvvet.edgeone.app/',
+    '10_enerji':                  'https://enerji10.edgeone.app/',
+    '10_elektrik':                'https://elektrik10.edgeone.app/',
+    '10_dalgalar':                'https://dalgalar10.edgeone.app/',
+
+    // 11. Sinif
+    '11_vektorler':               'https://vektor11.edgeone.app/',
+    '11_bagil_hareket':           'https://bagilharaket11.edgeone.app/',
+    '11_newton':                  'https://newton11.edgeone.app/',
+    '11_1d_ivme':                 'https://birsabit11.edgeone.app/',
+    '11_2d_ivme':                 'https://ikisabit11.edgeone.app/',
+    '11_enerji_hareket':          'https://enerji11.edgeone.app/',
+    '11_itme_momentum':           'https://moment11.edgeone.app/',
+    '11_tork_denge':              'https://tork11.edgeone.app/',
+    '11_elektrik_manyetizma':     'https://manyetizma11.edgeone.app/',
+
+    // 12. Sinif
+    '12_cembersel':               'https://cebirsel12.edgeone.app/',
+    '12_bhh':                     'https://basit12.edgeone.app/',
+    '12_dalga_mekanigi':          'https://dalga12.edgeone.app/',
+    '12_atom_fizigi':             'https://atom12.edgeone.app/',
+    '12_modern_fizik':            'https://modernfizik.edgeone.app/',
+    '12_modern_teknoloji':        'https://modern12.edgeone.app/',
+
+    // Simulasyonlar
+    'sim_grafik_cizimi':          'https://grafik.edgeone.app/',
+    'sim_yatay_atis':             'https://yatay.edgeone.app/',
+    'sim_direnc':                 'https://direnc27272.edgeone.app/',
+    'sim_formul':                 'https://formulhesapla.edgeone.app/',
+    'sim_fizik_grafik':           'https://grafikk.edgeone.app/',
+    'sim_deney_sim':              'https://deneysim.edgeone.app/',
+    'sim_hata_analizi':           'https://hataanaliz.edgeone.app/',
+    'sim_elektrik':               'https://elektrik.edgeone.app/',
+    'sim_problem':                'https://sorucoz.edgeone.app/',
+    'sim_soru_uretici':           'https://soruureteci.edgeone.app/',
+
+    // Universiteye Hazirlik
+    'uni_tyt':                    'https://tytlunix.edgeone.app/',
+    'uni_ayt':                    'https://aytlunix.edgeone.app/',
+
+    // Lunix AI
+    'Lunix_ai':                    'https://lunixai.edgeone.app/'
+};
+
+
+// ================================================================
+//  VERI
+// ================================================================
+
+var CLASS_DATA = {
+    9: {
+        title: '9. SINIF',
+        color: '#ff6b35',
+        // 9.sinif konulari ters siralama (4,3,2,1): Fizik Bilimi ve Kariyer Kesfi, Kuvvet ve Hareket, Akiskanlar, Enerji
+        units: [
+            { n: 'Fizik Bilimi ve Kariyer Kesfi', k: '9_fizik_kariyer' },
+            { n: 'Kuvvet ve Hareket', k: '9_kuvvet_hareket' },
+            { n: 'Akiskanlar', k: '9_akiskanlar' },
+            { n: 'Enerji', k: '9_enerji' }
+        ]
+    },
+    10: {
+        title: '10. SINIF',
+        color: '#ff9800',
+        units: [
+            { n: 'Kuvvet ve Hareket (Mekanik)', k: '10_kuvvet_hareket' },
+            { n: 'Enerji', k: '10_enerji' },
+            { n: 'Elektrik', k: '10_elektrik' },
+            { n: 'Dalgalar (Ses ve Deprem)', k: '10_dalgalar' }
+        ]
+    },
+    11: {
+        title: '11. SINIF',
+        color: '#e53935',
+        units: [
+            { n: 'Vektorler', k: '11_vektorler' },
+            { n: 'Bagil Hareket', k: '11_bagil_hareket' },
+            { n: 'Newton\'un Hareket Yasalari', k: '11_newton' },
+            { n: 'Bir Boyutta Sabit Ivmeli Hareket', k: '11_1d_ivme' },
+            { n: 'Iki Boyutta Sabit Ivmeli Hareket', k: '11_2d_ivme' },
+            { n: 'Enerji ve Hareket', k: '11_enerji_hareket' },
+            { n: 'Itme ve Cizgisel Momentum', k: '11_itme_momentum' },
+            { n: 'Tork ve Denge', k: '11_tork_denge' },
+            { n: 'Elektrik ve Manyetizma', k: '11_elektrik_manyetizma' }
+        ]
+    },
+    12: {
+        title: '12. SINIF',
+        color: '#d50000',
+        units: [
+            { n: 'Cembersel Hareket', k: '12_cembersel' },
+            { n: 'Basit Harmonik Hareket', k: '12_bhh' },
+            { n: 'Dalga Mekanigi', k: '12_dalga_mekanigi' },
+            { n: 'Atom Fizigine Giris ve Radyoaktivite', k: '12_atom_fizigi' },
+            { n: 'Modern Fizik', k: '12_modern_fizik' },
+            { n: 'Modern Fizigin Teknolojideki Uygulamalari', k: '12_modern_teknoloji' }
+        ]
+    }
+};
+
+var SIMS = [
+    { n: 'Grafik Cizimi', k: 'sim_grafik_cizimi' },
+    { n: 'Yatay Atis', k: 'sim_yatay_atis' },
+    { n: 'Direnc Hesaplama', k: 'sim_direnc' },
+    { n: 'Formul Hesaplayici', k: 'sim_formul' },
+    { n: 'Fizik Grafik Araci', k: 'sim_fizik_grafik' },
+    { n: 'Deney Simulasyonlari', k: 'sim_deney_sim' },
+    { n: 'Hata Analizi', k: 'sim_hata_analizi' },
+    { n: 'Elektrik Simulasyonu', k: 'sim_elektrik' },
+    { n: 'Problem Cozucu', k: 'sim_problem' },
+    { n: 'Soru Uretici', k: 'sim_soru_uretici' }
+];
+
+var UNI = [
+    { n: 'TYT Hazirlik', k: 'uni_tyt' },
+    { n: 'AYT Hazirlik', k: 'uni_ayt' }
+];
+
+
+// ================================================================
+//  LOCAL STORAGE (SHOWCASE TEKRAR GOSTERMEME)
+// ================================================================
+
+var SHOWCASE_KEY = 'fizikcep_showcase_dismissed';
+
+function isShowcaseDismissed() {
+    try {
+        return localStorage.getItem(SHOWCASE_KEY) === 'true';
+    } catch(e) {
+        return false;
+    }
+}
+
+function setShowcaseDismissed() {
+    try {
+        localStorage.setItem(SHOWCASE_KEY, 'true');
+    } catch(e) {}
+}
+
+// ================================================================
+//  NAVIGASYON & TARIHCE YONETIMI
+// ================================================================
+
+var menuReady = false;
+var appStarted = false;
+window.history.pushState({ page: 'intro' }, '');
+
+function hidePages() {
+    document.querySelectorAll('.page').forEach(function(p) { p.classList.remove('active'); });
+}
+
+function showPage(id) {
+    hidePages();
+    var el = document.getElementById(id);
+    if (el) el.classList.add('active');
+    var fb = document.getElementById('Lunix-btn');
+    fb.classList.add('show');
+    var ib = document.getElementById('info-btn');
+    ib.classList.add('show');
+}
+
+function navMenu(pushState = true) {
+    if (!menuReady) {
+        buildMenu();
+        menuReady = true;
+    }
+    var iframeBox = document.getElementById('iframe-box');
+    if (iframeBox.classList.contains('active')) {
+        closeFrame(false);
+    }
+    showPage('main-menu');
+    if (pushState) {
+        window.history.pushState({ page: 'menu' }, '');
+    }
+}
+
+function navClass(grade) {
+    var d = CLASS_DATA[grade];
+    if (!d) return;
+    var titleEl = document.getElementById('cp-title');
+    titleEl.textContent = d.title;
+    titleEl.style.color = d.color;
+    var box = document.getElementById('cp-units');
+    box.innerHTML = '';
+    d.units.forEach(function(u, i) {
+        var c = document.createElement('div');
+        c.className = 'u-card stg';
+        c.style.animationDelay = (i * 0.05) + 's';
+        c.onclick = function() { openSite(u.k); };
+        c.innerHTML = '<span class="u-idx" style="color:' + d.color + '">' + pad(i + 1) + '</span>' +
+                       '<span class="u-name">' + u.n + '</span>' +
+                       '<span class="u-arrow">&#8594;</span>';
+        box.appendChild(c);
+    });
+    showPage('class-page');
+    window.history.pushState({ page: 'class', grade: grade }, '');
+}
+
+function navSim() {
+    var box = document.getElementById('sp-list');
+    box.innerHTML = '';
+    SIMS.forEach(function(s, i) {
+        var c = document.createElement('div');
+        c.className = 'u-card stg';
+        c.style.animationDelay = (i * 0.04) + 's';
+        c.onclick = function() { openSite(s.k); };
+        c.innerHTML = '<span class="u-idx" style="color:#ff6b35">' + pad(i + 1) + '</span>' +
+                       '<span class="u-name">' + s.n + '</span>' +
+                       '<span class="u-arrow">&#8594;</span>';
+        box.appendChild(c);
+    });
+    showPage('sim-page');
+    window.history.pushState({ page: 'simulations' }, '');
+}
+
+function navUni() {
+    var box = document.getElementById('up-list');
+    box.innerHTML = '';
+    UNI.forEach(function(u, i) {
+        var c = document.createElement('div');
+        c.className = 'u-card stg';
+        c.style.animationDelay = (i * 0.08) + 's';
+        c.onclick = function() { openSite(u.k); };
+        c.innerHTML = '<span class="u-idx" style="color:#ffc107">' + pad(i + 1) + '</span>' +
+                       '<span class="u-name">' + u.n + '</span>' +
+                       '<span class="u-arrow">&#8594;</span>';
+        box.appendChild(c);
+    });
+    showPage('uni-page');
+    window.history.pushState({ page: 'university' }, '');
+}
+
+function openSite(key) {
+    var url = URLS[key] || 'https://example.com';
+    var frame = document.getElementById('frame');
+    var box = document.getElementById('iframe-box');
+    var loader = document.getElementById('iframe-load');
+    loader.style.display = 'flex';
+    frame.src = 'about:blank';
+    box.classList.add('active');
+    document.getElementById('Lunix-btn').classList.remove('show');
+    document.getElementById('info-btn').classList.remove('show');
+    setTimeout(function() {
+        frame.src = url;
+    }, 50);
+    frame.onload = function() {
+        loader.style.display = 'none';
+    };
+    window.history.pushState({ page: 'iframe', key: key }, '');
+}
+
+function closeFrame(pushState = true) {
+    var box = document.getElementById('iframe-box');
+    if (!box.classList.contains('active')) return;
+    box.classList.remove('active');
+    document.getElementById('frame').src = 'about:blank';
+    document.getElementById('Lunix-btn').classList.add('show');
+    document.getElementById('info-btn').classList.add('show');
+    document.getElementById('iframe-load').style.display = 'flex';
+    
+    var activePage = document.querySelector('.page.active');
+    if (activePage && activePage.id !== 'main-menu') {
+        document.getElementById('Lunix-btn').classList.add('show');
+    }
+    
+    if (pushState) {
+        window.history.back();
+    }
+}
+
+function openLunix() {
+    openSite('Lunix_ai');
+}
+
+function pad(n) {
+    return n < 10 ? '0' + n : '' + n;
+}
+
+// ================================================================
+//  SHOWCASE (TANITIM KARTI) FONKSIYONLARI
+// ================================================================
+
+function startApp() {
+    var showcase = document.getElementById('showcase');
+    var body = document.getElementById('bodyEl');
+    showcase.classList.add('hidden');
+    body.classList.remove('showcase-active');
+    appStarted = true;
+    if (!menuReady) {
+        buildMenu();
+        menuReady = true;
+    }
+    showPage('main-menu');
+    window.history.pushState({ page: 'menu' }, '');
+}
+
+function dismissShowcase() {
+    setShowcaseDismissed();
+    startApp();
+}
+
+// ================================================================
+//  INFO MODAL FONKSIYONLARI
+// ================================================================
+
+function openInfo() {
+    var modal = document.getElementById('info-modal');
+    modal.classList.add('active');
+}
+
+function closeInfo() {
+    var modal = document.getElementById('info-modal');
+    modal.classList.remove('active');
+}
+
+// Modal disina tiklayinca kapatma
+document.getElementById('info-modal').addEventListener('click', function(e) {
+    if (e.target === this) {
+        closeInfo();
+    }
+});
+
+// ================================================================
+//  GERI TUSU (POPSTATE) DINLEYICISI (CIKMA MENUSU KALDIRILDI)
+// ================================================================
+window.addEventListener('popstate', function(event) {
+    var showcase = document.getElementById('showcase');
+    if (!showcase.classList.contains('hidden')) {
+        startApp();
+        return;
+    }
+    
+    var iframeBox = document.getElementById('iframe-box');
+    var state = event.state;
+    
+    if (iframeBox.classList.contains('active')) {
+        iframeBox.classList.remove('active');
+        document.getElementById('frame').src = 'about:blank';
+        document.getElementById('Lunix-btn').classList.add('show');
+        document.getElementById('info-btn').classList.add('show');
+        document.getElementById('iframe-load').style.display = 'flex';
+        if (state && state.page !== 'iframe') {
+            if (state.page === 'menu') navMenu(false);
+            else if (state.page === 'class') navClass(state.grade);
+            else if (state.page === 'simulations') navSim();
+            else if (state.page === 'university') navUni();
+        }
+        return;
+    }
+    
+    var activePage = document.querySelector('.page.active');
+    if (activePage && activePage.id !== 'main-menu') {
+        navMenu(false);
+        return;
+    }
+    
+    // Ana menude geri tusuna basilirsa sadece tarihceyi ilerlet (cikma menusu tamamen kaldirildi)
+    if (activePage && activePage.id === 'main-menu') {
+        window.history.pushState({ page: 'menu' }, '');
+    }
+});
+
+
+// ================================================================
+//  MENU OLUSTURMA
+// ================================================================
+
+function buildMenu() {
+    var cg = document.getElementById('cls-grid');
+    cg.innerHTML = '';
+    var grades = [9, 10, 11, 12];
+    grades.forEach(function(g, i) {
+        var d = CLASS_DATA[g];
+        var card = document.createElement('div');
+        card.className = 'c-card stg';
+        card.setAttribute('data-g', g);
+        card.style.animationDelay = (i * 0.08) + 's';
+        card.onclick = function() { navClass(g); };
+        card.innerHTML = '<div class="c-num">' + g + '</div>' +
+                          '<div class="c-label">' + g + '. Sinif Fizik</div>' +
+                          '<div class="c-count">' + d.units.length + ' unite</div>';
+        cg.appendChild(card);
+    });
+
+    var tg = document.getElementById('tool-grid');
+    tg.innerHTML = '';
+
+    var simCard = document.createElement('div');
+    simCard.className = 'f-card f-sim stg';
+    simCard.style.animationDelay = '0.36s';
+    simCard.onclick = navSim;
+    simCard.innerHTML = '<div class="f-title">Simulasyonlar</div>' +
+                         '<div class="f-desc">' + SIMS.length + ' interaktif arac</div>';
+    tg.appendChild(simCard);
+
+    var uniCard = document.createElement('div');
+    uniCard.className = 'f-card f-uni stg';
+    uniCard.style.animationDelay = '0.44s';
+    uniCard.onclick = navUni;
+    uniCard.innerHTML = '<div class="f-title">Universiteye Hazirlik</div>' +
+                         '<div class="f-desc">TYT ve AYT</div>';
+    tg.appendChild(uniCard);
+}
+
+
+// ================================================================
+//  INTRO VE AKIS BASLATMA
+// ================================================================
+
+(function init() {
+    // Rastgele fizik sozu sec
+    var rastgeleSoz = FIZIK_SOZLERI[Math.floor(Math.random() * FIZIK_SOZLERI.length)];
+    document.getElementById('i-quote').textContent = '"' + rastgeleSoz + '"';
+    
+    var intro = document.getElementById('intro');
+    var body = document.getElementById('bodyEl');
+    var showcase = document.getElementById('showcase');
+    
+    setTimeout(function() {
+        intro.classList.add('fade-out');
+        body.classList.remove('intro-active');
+        
+        setTimeout(function() {
+            intro.style.display = 'none';
+            
+            if (isShowcaseDismissed()) {
+                appStarted = true;
+                body.classList.remove('showcase-active');
+                navMenu();
+            } else {
+                body.classList.add('showcase-active');
+                showcase.classList.remove('hidden');
+            }
+        }, 700);
+    }, 3500);
+})();
+</script>
+</body>
+</html>
